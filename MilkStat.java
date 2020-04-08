@@ -12,11 +12,13 @@ import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Font;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 public class MilkStat extends Application implements Stat {
@@ -39,6 +41,9 @@ public class MilkStat extends Application implements Stat {
     // add button or image to root panel, currently not used
     BorderPane root = new BorderPane();
     
+    
+
+
     Button b1= new Button("Load Single File");   
     Button b2 = new Button("Load Multiple Files");      
     Button b3 = new Button("Load All");
@@ -101,7 +106,31 @@ public class MilkStat extends Application implements Stat {
       @Override
       public void handle(ActionEvent event) {
         // put event triered by button1 here
-          System.out.println("click");
+        FileChooser fc1 = new FileChooser();
+        fc1.setTitle("Load Single File");
+        fc1.showOpenDialog(primaryStage);
+      }        
+    });
+    
+    b2.setOnAction (new EventHandler<ActionEvent>() {
+
+      @Override
+      public void handle(ActionEvent event) {
+        // put event triered by button1 here
+        FileChooser fc2 = new FileChooser();
+        fc2.setTitle("Load Multiple Files");
+        fc2.showOpenDialog(primaryStage);
+      }        
+    });
+    
+    b3.setOnAction (new EventHandler<ActionEvent>() {
+
+      @Override
+      public void handle(ActionEvent event) {
+        // put event triered by button1 here
+        FileChooser fc3 = new FileChooser();
+        fc3.setTitle("Load All Files");
+        fc3.showOpenDialog(primaryStage);
       }        
     });
     
@@ -112,18 +141,30 @@ public class MilkStat extends Application implements Stat {
          Label labelTitle = new Label("Milk Weights Analyzer");
          labelTitle.setLayoutX (150);
          labelTitle.setLayoutY (25);
-         labelTitle.setFont (new Font("Arial", 30));
+         labelTitle.setFont (new Font("Arial", 35));
+         
+         Label labelAll = new Label("Full Year");
+         labelAll.setLayoutX (235);
+         labelAll.setLayoutY (175);
+         labelAll.setFont (new Font("Arial", 20));
+         
+         Button buttonAll = new Button("Analyze");
+         buttonAll.setLayoutX (240);
+         buttonAll.setLayoutY (205);
+         
+         
          
          
          Label labelID = new Label("Input farmID: ");
-         labelID.setLayoutX (225);
-         labelID.setLayoutY (400);
-          
-         TextField text = new TextField();
+         labelID.setLayoutX (220);
+         labelID.setLayoutY (395);
+         labelID.setFont (new Font("Arial", 20));
          
          
-         text.setLayoutX (200);
-         text.setLayoutY (420);
+         TextField text = new TextField();        
+         
+         text.setLayoutX (210);
+         text.setLayoutY (425);
          
          Tooltip tip = new Tooltip ("This is the farmID");
          tip.setFont (Font.font(25));      
@@ -143,11 +184,44 @@ public class MilkStat extends Application implements Stat {
            }        
          });
          
+         Label labelRange = new Label("Select date range: ");
+         labelRange.setLayoutX (210);
+         labelRange.setLayoutY (250);
+         labelRange.setFont (new Font("Arial", 20));
+         
+         
+         
+         Label labelMonth = new Label("Select month: ");
+         labelMonth.setLayoutX (220);
+         labelMonth.setLayoutY (320);
+         labelMonth.setFont (new Font("Arial", 20));
+         
+         ComboBox comboBox = new ComboBox();
+         comboBox.getItems().add("Janunary");
+         comboBox.getItems().add("Febrary");
+         comboBox.getItems().add("March");
+         comboBox.getItems().add("April");
+         comboBox.getItems().add("May");
+         comboBox.getItems().add("June");
+         comboBox.getItems().add("July");
+         comboBox.getItems().add("August");
+         comboBox.getItems().add("September");
+         comboBox.getItems().add("Octember");
+         comboBox.getItems().add("November");
+         comboBox.getItems().add("December");
+         
+         comboBox.setLayoutX (225);
+         comboBox.setLayoutY (345);
+         
+         
+
+         
     
     
     // add at least one node (borderPane most, or button or layout) to scene  
     Group group = new Group();
-    group.getChildren().addAll (b1,b2,b3,b4,b5,labelID,text,labelTitle);
+    group.getChildren().addAll (b1,b2,b3,b4,b5,labelID,text,labelTitle,labelMonth,
+        comboBox,labelAll,buttonAll,labelRange);
     
     Scene scene = new Scene(group);
     
