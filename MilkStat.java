@@ -4,6 +4,8 @@ import java.util.Map;
 import java.util.Set;
 import javafx.application.Application;
 import javafx.application.HostServices;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -31,14 +33,51 @@ public class MilkStat extends Application implements Stat {
     // add button or image to root panel, currently not used
     BorderPane root = new BorderPane();
     
-    Button button = new Button("continue");
-    button.setCursor (Cursor.MOVE);
-    button.setPrefWidth (200);
-    button.setPrefHeight (200);
+    Button b1= new Button("Load Single File");   
+    Button b2 = new Button("Load Multiple Files");      
+    Button b3 = new Button("Load All");
+    
+    b1.setLayoutX(100);
+    b1.setLayoutY(100);
+    b1.setPrefWidth(100);
+    b1.setPrefHeight(50);
+    
+    
+    b2.setLayoutX(250);
+    b2.setLayoutY(100);
+    b2.setPrefWidth(100);
+    b2.setPrefHeight(50);
+        
+    
+    b3.setLayoutX(400);
+    b3.setLayoutY(100);
+    b3.setPrefWidth(100);
+    b3.setPrefHeight(50);
+    // use css
+    b1.setStyle("-fx-background-color:greenyellow;"+
+                "-fx-background-radium:20;"
+        );
+    
+    b2.setStyle("-fx-background-color:yellowgreen;"+
+        "-fx-background-radium:20;"
+);
+    
+    b3.setStyle("-fx-background-color:gray;"+
+        "-fx-background-radium:20;"
+);
+    
+    b1.setOnAction (new EventHandler<ActionEvent>() {
+
+      @Override
+      public void handle(ActionEvent event) {
+        // put event triered by button1 here
+          System.out.println("click");
+      }        
+    });
     
     // add at least one node (borderPane most, or button or layout) to scene  
     Group group = new Group();
-    group.getChildren().add (button);
+    group.getChildren().addAll (b1,b2,b3);
     
     Scene scene = new Scene(group);
     
