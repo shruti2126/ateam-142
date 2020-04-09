@@ -14,10 +14,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
@@ -207,14 +209,14 @@ public class MilkStat extends Application implements Stat {
 
          Label labelID = new Label("Input farmID: ");
          labelID.setLayoutX (220);
-         labelID.setLayoutY (395);
+         labelID.setLayoutY (405);
          labelID.setFont (new Font("Arial", 20));
          
          
          TextField text = new TextField();        
          
          text.setLayoutX (210);
-         text.setLayoutY (425);
+         text.setLayoutY (435);
          
          Tooltip tip = new Tooltip ("This is the farmID");
          tip.setFont (Font.font(25));      
@@ -223,9 +225,9 @@ public class MilkStat extends Application implements Stat {
          text.setPromptText("Input farmID here: ");
          text.setFocusTraversable (false);
          
-         Button buttonID = new Button("Farm Analyze");
+         Button buttonID = new Button("Farm Analyze Selection");
          buttonID.setLayoutX (365);
-         buttonID.setLayoutY (425);
+         buttonID.setLayoutY (435);
          
          
          // limit input to 12 digits         
@@ -257,16 +259,25 @@ public class MilkStat extends Application implements Stat {
        
          });
          
+         DatePicker startPicker = new DatePicker();
+         DatePicker endPicker = new DatePicker();
+         
          Label labelRange = new Label("Select date range: ");
          labelRange.setLayoutX (210);
          labelRange.setLayoutY (260);
          labelRange.setFont (new Font("Arial", 20));
          
-         
+         GridPane gp = new GridPane();
+         gp.add(startPicker,0,0);
+         gp.add(endPicker,1,0);
+         gp.setHgap(10);
+         gp.setVgap(10);
+         gp.setLayoutX (150);
+         gp.setLayoutY (290);
          
          Label labelMonth = new Label("Select month: ");
          labelMonth.setLayoutX (220);
-         labelMonth.setLayoutY (320);
+         labelMonth.setLayoutY (330);
          labelMonth.setFont (new Font("Arial", 20));
          
          ComboBox comboBox = new ComboBox();
@@ -284,13 +295,13 @@ public class MilkStat extends Application implements Stat {
          comboBox.getItems().add("December");
          
          comboBox.setLayoutX (225);
-         comboBox.setLayoutY (345);
+         comboBox.setLayoutY (360);
          
    
         // add at least one node (borderPane most, or button or layout) to scene  
         Group group = new Group();
         group.getChildren().addAll (b1,b2,b3,b4,b5,labelID,text,labelTitle,labelMonth,
-            comboBox,labelAll,buttonAll,labelRange,labelUploadFile,buttonID);
+            comboBox,labelAll,buttonAll,labelRange,labelUploadFile,buttonID,gp);
         
         Scene scene = new Scene(group);
         
