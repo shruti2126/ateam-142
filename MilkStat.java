@@ -12,11 +12,13 @@ import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -26,6 +28,9 @@ public class MilkStat extends Application implements Stat {
   private List <Farm> farms;  
   private Map<Integer,List<Milk>> monthMap;
   private Map<String, Farm> farmMap;
+  
+  
+  File singleFile = null;
   
   public static void main(String[] args) {
     launch(args);
@@ -38,15 +43,9 @@ public class MilkStat extends Application implements Stat {
 //    HostServices host = getHostServices();
 //    host.showDocument ("www.google.com");
     
-    // add button or image to root panel, currently not used
-    BorderPane root = new BorderPane();
-    
-    
-
-
     Button b1= new Button("Load Single File");   
-    Button b2 = new Button("Load Multiple Files");      
-    Button b3 = new Button("Load All");
+    Button b2 = new Button("Load Multi Files");      
+    Button b3 = new Button("Load All Files");
     Button b4 = new Button("Show Report");   
     Button b5 = new Button("Save Report");      
     
@@ -84,31 +83,41 @@ public class MilkStat extends Application implements Stat {
     
     b2.setStyle("-fx-background-color:greenyellow;"+
         "-fx-background-radium:20;"
-);
+        );
     
     b3.setStyle("-fx-background-color:greenyellow;"+
         "-fx-background-radium:20;"
-);
+        );
     
     b4.setStyle("-fx-text-fill:red;"+
         "-fx-background-color:lightblue;"+
         "-fx-background-radium:25;"
-);
+        );
     
     b5.setStyle("-fx-text-fill:red;"+
         "-fx-background-color:lightblue;"+
         "-fx-background-radium:25;"
-);
+        );
     
-    
+    Label labelUploadFile = new Label();
     b1.setOnAction (new EventHandler<ActionEvent>() {
-
+      
       @Override
       public void handle(ActionEvent event) {
         // put event triered by button1 here
         FileChooser fc1 = new FileChooser();
-        fc1.setTitle("Load Single File");
-        fc1.showOpenDialog(primaryStage);
+        fc1.setTitle("Load Single File");        
+        singleFile = fc1.showOpenDialog(primaryStage);
+        if (singleFile !=null) {
+          labelUploadFile.setText(singleFile.toString());
+          labelUploadFile.setLayoutX (80);
+          labelUploadFile.setLayoutY (155);
+          labelUploadFile.setFont (new Font("Arial", 10));
+          b1.setText("uploaded");
+          b1.setStyle("-fx-background-color:yellow;"+
+              "-fx-background-radium:30;"
+      );
+        }
       }        
     });
     
@@ -145,16 +154,14 @@ public class MilkStat extends Application implements Stat {
          
          Label labelAll = new Label("Full Year");
          labelAll.setLayoutX (235);
-         labelAll.setLayoutY (175);
+         labelAll.setLayoutY (195);
          labelAll.setFont (new Font("Arial", 20));
          
-         Button buttonAll = new Button("Analyze");
-         buttonAll.setLayoutX (240);
-         buttonAll.setLayoutY (205);
-         
-         
-         
-         
+         CheckBox buttonAll = new CheckBox ("Annual Analyze");
+         buttonAll.setLayoutX (220);
+         buttonAll.setLayoutY (225);        
+
+
          Label labelID = new Label("Input farmID: ");
          labelID.setLayoutX (220);
          labelID.setLayoutY (395);
@@ -173,6 +180,11 @@ public class MilkStat extends Application implements Stat {
          text.setPromptText("Input farmID here: ");
          text.setFocusTraversable (false);
          
+         Button buttonID = new Button("Farm Analyze");
+         buttonID.setLayoutX (365);
+         buttonID.setLayoutY (425);
+         
+         
          // limit input to 12 digits
          
          text.textProperty().addListener(new ChangeListener<String>() {
@@ -180,13 +192,17 @@ public class MilkStat extends Application implements Stat {
            @Override
            public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
                if (arg2.length() > 12)
-                 text.setText (arg1);                
+                 text.setText (arg1);   
+               if (arg2.length() > 0)
+                 buttonID.setStyle("-fx-background-color:red;"+
+                     "-fx-background-radium:20;"
+             );
            }        
          });
          
          Label labelRange = new Label("Select date range: ");
          labelRange.setLayoutX (210);
-         labelRange.setLayoutY (250);
+         labelRange.setLayoutY (260);
          labelRange.setFont (new Font("Arial", 20));
          
          
@@ -213,15 +229,11 @@ public class MilkStat extends Application implements Stat {
          comboBox.setLayoutX (225);
          comboBox.setLayoutY (345);
          
-         
-
-         
-    
-    
+   
     // add at least one node (borderPane most, or button or layout) to scene  
     Group group = new Group();
     group.getChildren().addAll (b1,b2,b3,b4,b5,labelID,text,labelTitle,labelMonth,
-        comboBox,labelAll,buttonAll,labelRange);
+        comboBox,labelAll,buttonAll,labelRange,labelUploadFile,buttonID);
     
     Scene scene = new Scene(group);
     
