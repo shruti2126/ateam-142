@@ -107,7 +107,7 @@ public class Milk implements Comparable<Milk> {
 
   @Override
   public int compareTo(Milk o) {
-    return this.weight-o.weight;
+    return o.weight -this.weight;
   }
   
 }
