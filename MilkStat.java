@@ -24,11 +24,25 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 public class MilkStat extends Application implements Stat {
+  /**
+   * @return the report
+   */
+  public Report getReport() {
+    return report;
+  }
+
+  /**
+   * @param report the report to set
+   */
+  public void setReport(Report report) {
+    this.report = report;
+  }
+
   private List <Milk> storage;
   private List <Farm> farms;  
   private Map<Integer,List<Milk>> monthMap;
   private Map<String, Farm> farmMap;
-  
+  private Report report;
   
   File singleFile = null;
   
@@ -144,6 +158,34 @@ public class MilkStat extends Application implements Stat {
           fc3.showOpenDialog(primaryStage);
         }        
       });    
+      
+      
+      b4.setOnAction (new EventHandler<ActionEvent>() {
+        
+        @Override
+        public void handle(ActionEvent event) {
+          // put event triered by button1 here
+          // show report in screen
+            if (report != null) {
+              // save report as csv
+              System.out.println(report);
+            }
+        }        
+      }); 
+      
+      
+      
+      b5.setOnAction (new EventHandler<ActionEvent>() {
+        
+        @Override
+        public void handle(ActionEvent event) {
+          // put event triered by button1 here
+            if (report != null) {
+              // save report as csv
+              System.out.println(report);
+            }
+        }        
+      }); 
       
     
          //text field
