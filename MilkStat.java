@@ -99,51 +99,52 @@ public class MilkStat extends Application implements Stat {
         "-fx-background-radium:25;"
         );
     
-    Label labelUploadFile = new Label();
-    b1.setOnAction (new EventHandler<ActionEvent>() {
+    
+    
+      Label labelUploadFile = new Label();
+      b1.setOnAction (new EventHandler<ActionEvent>() {
+        
+        @Override
+        public void handle(ActionEvent event) {
+          // put event triered by button1 here
+          FileChooser fc1 = new FileChooser();
+          fc1.setTitle("Load Single File");        
+          singleFile = fc1.showOpenDialog(primaryStage);
+          if (singleFile !=null) {
+            labelUploadFile.setText(singleFile.toString());
+            labelUploadFile.setLayoutX (80);
+            labelUploadFile.setLayoutY (155);
+            labelUploadFile.setFont (new Font("Arial", 10));
+            b1.setText("uploaded");
+            b1.setStyle("-fx-background-color:yellow;"+
+                "-fx-background-radium:30;"
+        );
+          }
+        }        
+      });
       
-      @Override
-      public void handle(ActionEvent event) {
-        // put event triered by button1 here
-        FileChooser fc1 = new FileChooser();
-        fc1.setTitle("Load Single File");        
-        singleFile = fc1.showOpenDialog(primaryStage);
-        if (singleFile !=null) {
-          labelUploadFile.setText(singleFile.toString());
-          labelUploadFile.setLayoutX (80);
-          labelUploadFile.setLayoutY (155);
-          labelUploadFile.setFont (new Font("Arial", 10));
-          b1.setText("uploaded");
-          b1.setStyle("-fx-background-color:yellow;"+
-              "-fx-background-radium:30;"
-      );
-        }
-      }        
-    });
-    
-    b2.setOnAction (new EventHandler<ActionEvent>() {
-
-      @Override
-      public void handle(ActionEvent event) {
-        // put event triered by button1 here
-        FileChooser fc2 = new FileChooser();
-        fc2.setTitle("Load Multiple Files");
-        fc2.showOpenDialog(primaryStage);
-      }        
-    });
-    
-    b3.setOnAction (new EventHandler<ActionEvent>() {
-
-      @Override
-      public void handle(ActionEvent event) {
-        // put event triered by button1 here
-        FileChooser fc3 = new FileChooser();
-        fc3.setTitle("Load All Files");
-        fc3.showOpenDialog(primaryStage);
-      }        
-    });
-    
-    
+      b2.setOnAction (new EventHandler<ActionEvent>() {
+  
+        @Override
+        public void handle(ActionEvent event) {
+          // put event triered by button1 here
+          FileChooser fc2 = new FileChooser();
+          fc2.setTitle("Load Multiple Files");
+          fc2.showOpenDialog(primaryStage);
+        }        
+      });
+      
+      b3.setOnAction (new EventHandler<ActionEvent>() {
+  
+        @Override
+        public void handle(ActionEvent event) {
+          // put event triered by button1 here
+          FileChooser fc3 = new FileChooser();
+          fc3.setTitle("Load All Files");
+          fc3.showOpenDialog(primaryStage);
+        }        
+      });    
+      
     
          //text field
     
@@ -185,8 +186,7 @@ public class MilkStat extends Application implements Stat {
          buttonID.setLayoutY (425);
          
          
-         // limit input to 12 digits
-         
+         // limit input to 12 digits         
          text.textProperty().addListener(new ChangeListener<String>() {
 
            @Override
@@ -198,6 +198,21 @@ public class MilkStat extends Application implements Stat {
                      "-fx-background-radium:20;"
              );
            }        
+         });
+         
+         
+         // if selected all, trigger event, put summary all here:
+         buttonAll.selectedProperty().addListener(new ChangeListener<Boolean>() {
+
+          @Override
+          public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
+              if (arg2) {
+                System.out.println("selected all");
+                // method to summary annual
+              }
+          }
+
+       
          });
          
          Label labelRange = new Label("Select date range: ");
@@ -230,19 +245,21 @@ public class MilkStat extends Application implements Stat {
          comboBox.setLayoutY (345);
          
    
-    // add at least one node (borderPane most, or button or layout) to scene  
-    Group group = new Group();
-    group.getChildren().addAll (b1,b2,b3,b4,b5,labelID,text,labelTitle,labelMonth,
-        comboBox,labelAll,buttonAll,labelRange,labelUploadFile,buttonID);
+        // add at least one node (borderPane most, or button or layout) to scene  
+        Group group = new Group();
+        group.getChildren().addAll (b1,b2,b3,b4,b5,labelID,text,labelTitle,labelMonth,
+            comboBox,labelAll,buttonAll,labelRange,labelUploadFile,buttonID);
+        
+        Scene scene = new Scene(group);
+        
     
-    Scene scene = new Scene(group);
+        // set scene to stage
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("Milk Statistics");
+        primaryStage.setHeight(600);
+        primaryStage.setWidth(600);
+        primaryStage.show();
     
-    // set scene to stage
-    primaryStage.setScene(scene);
-    primaryStage.setTitle("Milk Statistics");
-    primaryStage.setHeight(600);
-    primaryStage.setWidth(600);
-    primaryStage.show();
   }
   
   
