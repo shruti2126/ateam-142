@@ -21,7 +21,11 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -170,7 +174,38 @@ public class MilkStat extends Application implements Stat {
           // show report in screen
             if (report != null) {
               // save report as csv
-              System.out.println(report);
+              Text text = new Text ("Report is As: ");
+              TextFlow textflow = new TextFlow();
+              
+              textflow.getChildren().addAll(text);
+              textflow.setTextAlignment (TextAlignment.CENTER);
+              Scene sceneOut = new Scene(textflow);
+              
+              Stage stage = new Stage();             
+              stage.setScene(sceneOut);
+              stage.setTitle("Report");
+              stage.setHeight(600);
+              stage.setWidth(600);
+              stage.show();
+            }
+            
+            else {
+              Text text = new Text ("Report is null");
+              text.setFont(Font.font("Helvetica",20));
+              text.setFill (Paint.valueOf("blue"));
+              
+              TextFlow textflow = new TextFlow();
+              
+              textflow.getChildren().addAll(text);
+              textflow.setTextAlignment (TextAlignment.CENTER);
+              Scene sceneOut = new Scene(textflow);
+              
+              Stage stage = new Stage();             
+              stage.setScene(sceneOut);
+              stage.setTitle("Report");
+              stage.setHeight(600);
+              stage.setWidth(600);
+              stage.show();
             }
         }        
       }); 
