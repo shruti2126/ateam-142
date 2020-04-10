@@ -1,5 +1,4 @@
 # ateam-142
-# README.md
 
 1. Course: cs400
 2. Semester: Spring 2020
