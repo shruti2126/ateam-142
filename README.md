@@ -3,6 +3,7 @@
 1. Course: cs400
 2. Semester: Spring 2020
 3. Project name: Milk Weights
+
     Milk Weights processes information about the production of milk products from various farms over time, and the program is     able to display reports about targeted areas of the data that the user may select. 
     
 4. Group: a142
