@@ -1,15 +1,17 @@
 # ateam-142
+# README.md
 
 1. Course: cs400
 2. Semester: Spring 2020
 3. Project name: Milk Weights
+    Milk Weights processes information about the production of milk products from various farms over time, and the program is     able to display reports about targeted areas of the data that the user may select. 
+    
 4. Group: a142
 
     Team Members:
     John Li (zli769@wisc.edu), CS400-001, x-142
     Duncan Broadie (dbroadie@wisc.edu), CS400-1
-    Shruti Sharma (sharma224@wisc.edu)
-    Hao Kui Ma (hma99@wisc.edu)
+    Shruti Sharma (sharma224@wisc.edu), CS400-1
     Samuel Bahr (sdbahr@wisc.edu), CS400-001, x-142
 
 5. Other notes or comments to the grader:
