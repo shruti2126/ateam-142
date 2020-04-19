@@ -229,65 +229,71 @@ public class MilkStat extends Application implements Stat {
     
          Label labelTitle = new Label("Milk Weights Analyzer");
          labelTitle.setLayoutX (150);
-         labelTitle.setLayoutY (25);
-         labelTitle.setFont (new Font("Arial", 35));
+         labelTitle.setLayoutY (10);
+         labelTitle.setFont (new Font("Arial", 30));
          
-         Label labelAll = new Label("Full Year");
-         labelAll.setLayoutX (235);
-         labelAll.setLayoutY (195);
+         
+         Label labelPartOne = new Label("I : Upload File");
+         labelPartOne.setTextFill(Color.web("#0076a3"));        
+         labelPartOne.setFont(new Font("Arial", 20));
+         labelPartOne.setLayoutX (50);
+         labelPartOne.setLayoutY (60);
+         
+         
+         Label labelPartTwo = new Label("II: Select Analyze (Selection One)");   
+         labelPartTwo.setTextFill(Color.web("#0076a3"));
+         labelPartTwo.setFont(new Font("Arial", 20));
+         labelPartTwo.setLayoutX (50);
+         labelPartTwo.setLayoutY (170);
+         
+         Label labelPartThree = new Label("III: Output Results");
+         labelPartThree.setTextFill(Color.web("#0076a3"));
+         labelPartThree.setFont(new Font("Arial", 20));
+         labelPartThree.setLayoutX (50);
+         labelPartThree.setLayoutY (450);
+         
+         
+         Label labelAll = new Label("1. Annual Analyze");
+         labelAll.setLayoutX (100);
+         labelAll.setLayoutY (210);
          labelAll.setFont (new Font("Arial", 20));
          
-         CheckBox buttonAll = new CheckBox ("Annual Analyze");
-         buttonAll.setLayoutX (220);
-         buttonAll.setLayoutY (225);        
+         CheckBox annulCheck = new CheckBox ("Annual Analyze");
+         annulCheck.setLayoutX (100);
+         annulCheck.setLayoutY (245);        
 
 
-         Label labelID = new Label("Input farmID: ");
-         labelID.setLayoutX (220);
-         labelID.setLayoutY (405);
-         labelID.setFont (new Font("Arial", 20));
+         Label labelFarmID = new Label("4. Farm Analyze ");
+         labelFarmID.setLayoutX (100);
+         labelFarmID.setLayoutY (365);
+         labelFarmID.setFont (new Font("Arial", 20));
          
+         CheckBox farmCheck = new CheckBox ("4. Farm Analyze");
+         farmCheck.setLayoutX (100);
+         farmCheck.setLayoutY (370);   
+         farmCheck.setStyle(
+             "-fx-font-size: 20;"
+        );
          
-         TextField text = new TextField();        
+         TextField textFarmID = new TextField();        
          
-         text.setLayoutX (210);
-         text.setLayoutY (435);
+         textFarmID.setLayoutX (150);
+         textFarmID.setLayoutY (400);
          
          Tooltip tip = new Tooltip ("This is the farmID");
          tip.setFont (Font.font(25));      
-         text.setTooltip (tip);
+         textFarmID.setTooltip (tip);
          
-         text.setPromptText("Input farmID here: ");
-         text.setFocusTraversable (false);
-         
-         Button buttonID = new Button("Farm Analyze Selection");
-         buttonID.setLayoutX (365);
-         buttonID.setLayoutY (435);
-         
-         
-         // limit input to 12 digits         
-         text.textProperty().addListener(new ChangeListener<String>() {
-
-           @Override
-           public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
-               if (arg2.length() > 12)
-                 text.setText (arg1);   
-               if (arg2.length() > 0)
-                 buttonID.setStyle("-fx-background-color:red;"+
-                     "-fx-background-radium:20;"
-             );
-           }        
-         });
-         
+         textFarmID.setPromptText("Input farmID here: ");
+         textFarmID.setFocusTraversable (false);
          
          // if selected all, trigger event, put summary all here:
-         buttonAll.selectedProperty().addListener(new ChangeListener<Boolean>() {
+         annulCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
 
           @Override
           public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
               if (arg2) {
                 System.out.println("selected all");
-                // method to summary annual
               }
           }
 
@@ -297,46 +303,58 @@ public class MilkStat extends Application implements Stat {
          DatePicker startPicker = new DatePicker();
          DatePicker endPicker = new DatePicker();
          
-         Label labelRange = new Label("Select date range: ");
-         labelRange.setLayoutX (210);
-         labelRange.setLayoutY (260);
+         Label labelRange = new Label("3. Date-range Analyze: ");
+         labelRange.setLayoutX (100);
+         labelRange.setLayoutY (285);
          labelRange.setFont (new Font("Arial", 20));
          
-         GridPane gp = new GridPane();
-         gp.add(startPicker,0,0);
-         gp.add(endPicker,1,0);
-         gp.setHgap(10);
-         gp.setVgap(10);
-         gp.setLayoutX (150);
-         gp.setLayoutY (290);
+         CheckBox dateCheck = new CheckBox ("3. Date Range Analyze");
+         dateCheck.setLayoutX (100);
+         dateCheck.setLayoutY (290); 
          
-         Label labelMonth = new Label("Select month: ");
-         labelMonth.setLayoutX (220);
-         labelMonth.setLayoutY (330);
+         dateCheck.setStyle(
+              "-fx-font-size: 20;"
+         );
+         
+         
+         GridPane gpDate = new GridPane();
+         gpDate.add(startPicker,0,0);
+         gpDate.add(endPicker,1,0);
+         gpDate.setHgap(10);
+         gpDate.setVgap(10);
+         gpDate.setLayoutX (150);
+         gpDate.setLayoutY (330);
+         
+         Label labelMonth = new Label("2. Month Analyze: ");
+         labelMonth.setLayoutX (300);
+         labelMonth.setLayoutY (210);
          labelMonth.setFont (new Font("Arial", 20));
          
-         ComboBox comboBox = new ComboBox();
-         comboBox.getItems().add("Janunary");
-         comboBox.getItems().add("Febrary");
-         comboBox.getItems().add("March");
-         comboBox.getItems().add("April");
-         comboBox.getItems().add("May");
-         comboBox.getItems().add("June");
-         comboBox.getItems().add("July");
-         comboBox.getItems().add("August");
-         comboBox.getItems().add("September");
-         comboBox.getItems().add("Octember");
-         comboBox.getItems().add("November");
-         comboBox.getItems().add("December");
+         ComboBox comboBoxMonth = new ComboBox();
+         comboBoxMonth.getItems().add("Janunary");
+         comboBoxMonth.getItems().add("Febrary");
+         comboBoxMonth.getItems().add("March");
+         comboBoxMonth.getItems().add("April");
+         comboBoxMonth.getItems().add("May");
+         comboBoxMonth.getItems().add("June");
+         comboBoxMonth.getItems().add("July");
+         comboBoxMonth.getItems().add("August");
+         comboBoxMonth.getItems().add("September");
+         comboBoxMonth.getItems().add("Octember");
+         comboBoxMonth.getItems().add("November");
+         comboBoxMonth.getItems().add("December");
          
-         comboBox.setLayoutX (225);
-         comboBox.setLayoutY (360);
+         comboBoxMonth.setLayoutX (300);
+         comboBoxMonth.setLayoutY (240);
          
+         CheckBox monthCheck = new CheckBox ("Month Analyze");
+         monthCheck.setLayoutX (420);
+         monthCheck.setLayoutY (245); 
    
         // add at least one node (borderPane most, or button or layout) to scene  
         Group group = new Group();
-        group.getChildren().addAll (b1,b2,b4,b5,labelID,text,labelTitle,labelMonth,
-            comboBox,labelAll,buttonAll,labelRange,labelUploadFile,buttonID,gp);
+        group.getChildren().addAll (labelPartOne,labelPartTwo,labelPartThree,b1,b2,b4,b5,textFarmID,labelTitle,labelMonth,
+            comboBoxMonth,labelAll,annulCheck,labelUploadFile,farmCheck,gpDate,monthCheck,dateCheck);
         
         Scene scene = new Scene(group);
         
