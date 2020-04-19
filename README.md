@@ -13,7 +13,9 @@
     Duncan Broadie (dbroadie@wisc.edu), CS400-1
     Shruti Sharma (sharma224@wisc.edu), CS400-1
     Samuel Bahr (sdbahr@wisc.edu), CS400-001, x-142
-
+    Hao Kui Ma (hma99@wisc.edu), CS400-001
+    
+    
 5. Other notes or comments to the grader:
     Run MilkStat to start the statistic analysis of milk weights.
     (a) for jdk 11 , user need JavaFX as library and set up VM path (for jdk 8, 9, or 10, JavaFX is embeded )
