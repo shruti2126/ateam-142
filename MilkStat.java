@@ -75,16 +75,16 @@ public class MilkStat extends Application implements Stat {
     b1.setPrefHeight(50);
     
     
-    b2.setLayoutX(250);
+//    b2.setLayoutX(250);
+//    b2.setLayoutY(100);
+//    b2.setPrefWidth(100);
+//    b2.setPrefHeight(50);
+        
+    
+    b2.setLayoutX(400);
     b2.setLayoutY(100);
     b2.setPrefWidth(100);
     b2.setPrefHeight(50);
-        
-    
-    b3.setLayoutX(400);
-    b3.setLayoutY(100);
-    b3.setPrefWidth(100);
-    b3.setPrefHeight(50);
     
     b4.setLayoutX(50);
     b4.setLayoutY(500);
@@ -335,7 +335,7 @@ public class MilkStat extends Application implements Stat {
    
         // add at least one node (borderPane most, or button or layout) to scene  
         Group group = new Group();
-        group.getChildren().addAll (b1,b2,b3,b4,b5,labelID,text,labelTitle,labelMonth,
+        group.getChildren().addAll (b1,b2,b4,b5,labelID,text,labelTitle,labelMonth,
             comboBox,labelAll,buttonAll,labelRange,labelUploadFile,buttonID,gp);
         
         Scene scene = new Scene(group);
