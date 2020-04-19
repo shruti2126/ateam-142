@@ -20,17 +20,13 @@
     (b) can load one or multiple csv files as source file (see sample format)
     (c) can choose show report in screen or save the generated statistics files to a location.
 
-To the milk statistical analysis, 
+To the milk statistical analysis, go to folder with executable.jar file:
 
-go to folder with executable.jar file:
-
-(you need to specify the path of your javafx lib)
+(you need to change the to path of your javafx lib)  run
 java --module-path "H:\javafx\javafx-sdk-11.0.2\lib" --add-modules javafx.controls,javafx.fxml -jar executable.jar
  
 
-
-
-	VM argument:
-	--module-path "H:\javafx\javafx-sdk-11.0.2\lib" --add-modules javafx.controls,javafx.fxml
+tip: running in eclipse, set up VM argument as: (change path to your javafx lib path)
+--module-path "H:\javafx\javafx-sdk-11.0.2\lib" --add-modules javafx.controls,javafx.fxml
 
 6.  [place any comments or notes that will help the grader here]
