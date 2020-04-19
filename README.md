@@ -13,24 +13,23 @@
     Duncan Broadie (dbroadie@wisc.edu), CS400-1
     Shruti Sharma (sharma224@wisc.edu), CS400-1
     Samuel Bahr (sdbahr@wisc.edu), CS400-001, x-142
-
+    Hao Kui Ma (hma99@wisc.edu), CS400-001
+    
+    
 5. Other notes or comments to the grader:
     Run MilkStat to start the statistic analysis of milk weights.
     (a) for jdk 11 , user need JavaFX as library and set up VM path (for jdk 8, 9, or 10, JavaFX is embeded )
     (b) can load one or multiple csv files as source file (see sample format)
     (c) can choose show report in screen or save the generated statistics files to a location.
 
-To the milk statistical analysis, 
+To the milk statistical analysis, go to folder with executable.jar file:
 
-go to folder with executable.jar file:
+(you need to change the to path of your javafx lib)
 
-(you need to specify the path of your javafx lib)
 java --module-path "H:\javafx\javafx-sdk-11.0.2\lib" --add-modules javafx.controls,javafx.fxml -jar executable.jar
  
 
-
-
-	VM argument:
-	--module-path "H:\javafx\javafx-sdk-11.0.2\lib" --add-modules javafx.controls,javafx.fxml
+tip: running in eclipse, set up VM argument as: (change path to your javafx lib path)
+--module-path "H:\javafx\javafx-sdk-11.0.2\lib" --add-modules javafx.controls,javafx.fxml
 
 6.  [place any comments or notes that will help the grader here]
