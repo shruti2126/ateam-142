@@ -22,7 +22,8 @@
 
 To the milk statistical analysis, go to folder with executable.jar file:
 
-(you need to change the to path of your javafx lib)  run
+(you need to change the to path of your javafx lib)
+
 java --module-path "H:\javafx\javafx-sdk-11.0.2\lib" --add-modules javafx.controls,javafx.fxml -jar executable.jar
  
 
