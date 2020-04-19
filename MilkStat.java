@@ -44,6 +44,7 @@ public class MilkStat extends Application implements Stat {
     this.report = report;
   }
 
+  
   private List <Milk> storage;
   private List <Farm> farms;  
   private Map<Integer,List<Milk>> monthMap;
@@ -65,7 +66,6 @@ public class MilkStat extends Application implements Stat {
     
     Button b1= new Button("Load Single File");   
     Button b2 = new Button("Load Multi Files");      
-    Button b3 = new Button("Load All Files");
     Button b4 = new Button("Show Report");   
     Button b5 = new Button("Save Report");      
     
@@ -104,11 +104,7 @@ public class MilkStat extends Application implements Stat {
     b2.setStyle("-fx-background-color:greenyellow;"+
         "-fx-background-radium:20;"
         );
-    
-    b3.setStyle("-fx-background-color:greenyellow;"+
-        "-fx-background-radium:20;"
-        );
-    
+
     b4.setStyle("-fx-text-fill:red;"+
         "-fx-background-color:lightblue;"+
         "-fx-background-radium:25;"
@@ -153,76 +149,9 @@ public class MilkStat extends Application implements Stat {
           fc2.showOpenDialog(primaryStage);
         }        
       });
-      
-      b3.setOnAction (new EventHandler<ActionEvent>() {
-  
-        @Override
-        public void handle(ActionEvent event) {
-          // put event triered by button1 here
-          FileChooser fc3 = new FileChooser();
-          fc3.setTitle("Load All Files");
-          fc3.showOpenDialog(primaryStage);
-        }        
-      });    
+
       
       
-      b4.setOnAction (new EventHandler<ActionEvent>() {
-        
-        @Override
-        public void handle(ActionEvent event) {
-          // put event triered by button1 here
-          // show report in screen
-            if (report != null) {
-              // save report as csv
-              Text text = new Text ("Report is As: ");
-              TextFlow textflow = new TextFlow();
-              
-              textflow.getChildren().addAll(text);
-              textflow.setTextAlignment (TextAlignment.CENTER);
-              Scene sceneOut = new Scene(textflow);
-              
-              Stage stage = new Stage();             
-              stage.setScene(sceneOut);
-              stage.setTitle("Report");
-              stage.setHeight(600);
-              stage.setWidth(600);
-              stage.show();
-            }
-            
-            else {
-              Text text = new Text ("Report is null");
-              text.setFont(Font.font("Helvetica",20));
-              text.setFill (Paint.valueOf("blue"));
-              
-              TextFlow textflow = new TextFlow();
-              
-              textflow.getChildren().addAll(text);
-              textflow.setTextAlignment (TextAlignment.CENTER);
-              Scene sceneOut = new Scene(textflow);
-              
-              Stage stage = new Stage();             
-              stage.setScene(sceneOut);
-              stage.setTitle("Report");
-              stage.setHeight(600);
-              stage.setWidth(600);
-              stage.show();
-            }
-        }        
-      }); 
-      
-      
-      
-      b5.setOnAction (new EventHandler<ActionEvent>() {
-        
-        @Override
-        public void handle(ActionEvent event) {
-          // put event triered by button1 here
-            if (report != null) {
-              // save report as csv
-              System.out.println(report);
-            }
-        }        
-      }); 
       
     
          //text field
@@ -261,7 +190,7 @@ public class MilkStat extends Application implements Stat {
          CheckBox annulCheck = new CheckBox ("Annual Analyze");
          annulCheck.setLayoutX (100);
          annulCheck.setLayoutY (245);        
-
+         
 
          Label labelFarmID = new Label("4. Farm Analyze ");
          labelFarmID.setLayoutX (100);
@@ -287,19 +216,7 @@ public class MilkStat extends Application implements Stat {
          textFarmID.setPromptText("Input farmID here: ");
          textFarmID.setFocusTraversable (false);
          
-         // if selected all, trigger event, put summary all here:
-         annulCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-
-          @Override
-          public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
-              if (arg2) {
-                System.out.println("selected all");
-              }
-          }
-
-       
-         });
-         
+        
          DatePicker startPicker = new DatePicker();
          DatePicker endPicker = new DatePicker();
          
@@ -351,6 +268,176 @@ public class MilkStat extends Application implements Stat {
          monthCheck.setLayoutX (420);
          monthCheck.setLayoutY (245); 
    
+         
+         // if selected all, trigger event to uncheck the others:
+         annulCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+          @Override
+          public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
+              if (arg2) {
+                System.out.println("selected annual");
+                monthCheck.setSelected(false);
+                dateCheck.setSelected(false);
+                farmCheck.setSelected(false);
+              }
+          }                 
+         });
+         
+
+         // if selected month, trigger event to uncheck the others:
+         monthCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+          @Override
+          public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
+              if (arg2) {
+                System.out.println("selected month");
+                annulCheck.setSelected(false);
+                dateCheck.setSelected(false);
+                farmCheck.setSelected(false);
+              }
+          }       
+          
+         });
+         
+         // date select, trigger event
+         dateCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+           @Override
+           public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
+               if (arg2) {
+                 System.out.println("selected date");
+                 monthCheck.setSelected(false);
+                 annulCheck.setSelected(false);
+                 farmCheck.setSelected(false);
+               }
+           }     
+           
+          });
+         
+         // date select, trigger event
+         farmCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+
+           @Override
+           public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
+               if (arg2) {
+                 System.out.println("selected farm");
+                 monthCheck.setSelected(false);
+                 annulCheck.setSelected(false);
+                 dateCheck.setSelected(false);
+               }
+           }      
+           
+          });
+     
+       if (annulCheck.isSelected()) {
+         // generate annul report
+       }
+       else if (monthCheck.isSelected()) {
+         // generate month report
+
+       }
+       
+       else if (dateCheck.isSelected()) {
+         // generate date report
+
+
+       }
+       else if (farmCheck.isSelected()) {
+         // generate farm report
+         
+       }
+       else {
+         System.out.println("no analyze method is selected");
+       }
+        
+       b4.setOnAction (new EventHandler<ActionEvent>() {         
+         @Override
+         public void handle(ActionEvent event) {
+           // put event triered by button1 here
+           // show report in screen
+             if (report != null) {
+               // save report as csv
+               Text text = new Text ("Report is As: ");
+               TextFlow textflow = new TextFlow();
+               
+               textflow.getChildren().addAll(text);
+               textflow.setTextAlignment (TextAlignment.CENTER);
+               Scene sceneOut = new Scene(textflow);
+               
+               Stage stage = new Stage();             
+               stage.setScene(sceneOut);
+               stage.setTitle("Report");
+               stage.setHeight(600);
+               stage.setWidth(600);
+               stage.show();
+             }
+             
+             else {
+               Text text = new Text ("Report is null");
+               text.setFont(Font.font("Helvetica",30));
+               text.setFill (Paint.valueOf("blue"));
+               
+               TextFlow textflow = new TextFlow();
+               
+               textflow.getChildren().addAll(text);
+               textflow.setTextAlignment (TextAlignment.CENTER);
+               Scene sceneOut = new Scene(textflow);
+               
+               Stage stage = new Stage();             
+               stage.setScene(sceneOut);
+               stage.setTitle("Report");
+               stage.setHeight(600);
+               stage.setWidth(600);
+               stage.show();
+             }
+         }        
+       }); 
+       
+       
+       
+       b5.setOnAction (new EventHandler<ActionEvent>() {
+         
+         @Override
+         public void handle(ActionEvent event) {
+           // put event triered by button1 here
+           // show report in screen
+             if (report != null) {
+               // save report as csv
+               Text text = new Text ("Report is As: ");
+               TextFlow textflow = new TextFlow();
+               
+               textflow.getChildren().addAll(text);
+               textflow.setTextAlignment (TextAlignment.CENTER);
+               Scene sceneOut = new Scene(textflow);
+               
+               Stage stage = new Stage();             
+               stage.setScene(sceneOut);
+               stage.setTitle("Report");
+               stage.setHeight(600);
+               stage.setWidth(600);
+               stage.show();
+             }
+             
+             else {
+               Text text = new Text ("Report is null");
+               text.setFont(Font.font("Helvetica",30));
+               text.setFill (Paint.valueOf("blue"));
+               
+               TextFlow textflow = new TextFlow();
+               
+               textflow.getChildren().addAll(text);
+               textflow.setTextAlignment (TextAlignment.CENTER);
+               Scene sceneOut = new Scene(textflow);
+               
+               Stage stage = new Stage();             
+               stage.setScene(sceneOut);
+               stage.setTitle("Report");
+               stage.setHeight(600);
+               stage.setWidth(600);
+               stage.show();
+             }
+         }        
+       }); 
+       
+       
+       
         // add at least one node (borderPane most, or button or layout) to scene  
         Group group = new Group();
         group.getChildren().addAll (labelPartOne,labelPartTwo,labelPartThree,b1,b2,b4,b5,textFarmID,labelTitle,labelMonth,
