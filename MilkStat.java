@@ -1,6 +1,8 @@
 import java.io.File;
 import java.nio.file.Files;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +50,12 @@ public class MilkStat extends Application implements Stat {
   private Map<Integer,List<Milk>> monthMap;
   private Map<String, Farm> farmMap;
   private Report report;
+  
+  
+  private int month;
+  private String id;
+  private Date start;
+  private Date end;
   
   File singleFile = null;
   
@@ -203,6 +211,8 @@ public class MilkStat extends Application implements Stat {
          textFarmID.setLayoutX (150);
          textFarmID.setLayoutY (400);
          
+         id = textFarmID.getText();
+         
          Tooltip tip = new Tooltip ("This is the farmID");
          tip.setFont (Font.font(25));      
          textFarmID.setTooltip (tip);
@@ -210,9 +220,13 @@ public class MilkStat extends Application implements Stat {
          textFarmID.setPromptText("Input farmID here: ");
          textFarmID.setFocusTraversable (false);
          
-        
+         ZoneId defaultZoneId = ZoneId.systemDefault();
+
          DatePicker startPicker = new DatePicker();
          DatePicker endPicker = new DatePicker();
+         
+         start = Date.from(startPicker.getValue().atStartOfDay(defaultZoneId).toInstant());;
+         end = Date.from(endPicker.getValue().atStartOfDay(defaultZoneId).toInstant());;
          
          Label labelRange = new Label("3. Date-range Analyze: ");
          labelRange.setLayoutX (100);
@@ -241,7 +255,7 @@ public class MilkStat extends Application implements Stat {
          labelMonth.setLayoutY (210);
          labelMonth.setFont (new Font("Arial", 20));
          
-         ComboBox comboBoxMonth = new ComboBox();
+         ComboBox <String> comboBoxMonth = new ComboBox<> ();
          comboBoxMonth.getItems().add("Janunary");
          comboBoxMonth.getItems().add("Febrary");
          comboBoxMonth.getItems().add("March");
@@ -257,6 +271,47 @@ public class MilkStat extends Application implements Stat {
          
          comboBoxMonth.setLayoutX (300);
          comboBoxMonth.setLayoutY (240);
+         
+         switch((String) comboBoxMonth.getValue()) {
+           case "Janunary":
+             month = 1;
+             break;
+           case "Febrary":
+             month = 2;
+             break;
+           case "March":
+             month = 3;
+             break;
+           case "April":
+             month = 4;
+             break;
+           case "May":
+             month = 5;
+             break;
+           case "June":
+             month = 6;
+             break;
+           case "July":
+             month = 7;
+             break;
+           case "August":
+             month = 8;
+             break;
+           case "September":
+             month = 9;
+             break;
+           case "Octember":
+             month = 10;
+             break;
+           case "November":
+             month = 11;
+             break;
+           case "December":
+             month = 12;
+             break;
+           default:
+             month = 0;
+         }
          
          CheckBox monthCheck = new CheckBox ("Month Analyze");
          monthCheck.setLayoutX (420);
@@ -287,8 +342,7 @@ public class MilkStat extends Application implements Stat {
                 dateCheck.setSelected(false);
                 farmCheck.setSelected(false);
               }
-          }       
-          
+          }     
          });
          
          // date select, trigger event
@@ -301,13 +355,11 @@ public class MilkStat extends Application implements Stat {
                  annulCheck.setSelected(false);
                  farmCheck.setSelected(false);
                }
-           }     
-           
+           } 
           });
          
          // date select, trigger event
          farmCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-
            @Override
            public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
                if (arg2) {
@@ -316,8 +368,7 @@ public class MilkStat extends Application implements Stat {
                  annulCheck.setSelected(false);
                  dateCheck.setSelected(false);
                }
-           }      
-           
+           }     
           });
          
        // to generate report
@@ -325,14 +376,14 @@ public class MilkStat extends Application implements Stat {
           report = showByFullYear();
        }
        else if (monthCheck.isSelected()) {
-         report = showByMonth();
+         report = showByMonth(month);
        }
        
        else if (dateCheck.isSelected()) {
-         report = showByDate();
+         report = showByDate(start,end);
        }
        else if (farmCheck.isSelected()) {
-         report = showByFarmID();
+         report = showByFarmID(id);
        }
        else {
          System.out.println("no analyze method is selected");
@@ -464,7 +515,7 @@ public class MilkStat extends Application implements Stat {
   }
 
   @Override
-  public Report showByFarmID() {
+  public Report showByFarmID(String id) {
     // TODO Auto-generated method stub
     Report farmReport = new Report("FarmId Report");
     // for loop to add milk
@@ -473,7 +524,7 @@ public class MilkStat extends Application implements Stat {
   }
 
   @Override
-  public Report showByMonth() {
+  public Report showByMonth(int month) {
     // TODO Auto-generated method stub
     Report monthReport = new Report("Month Report");
     // for loop to add milk
@@ -493,7 +544,7 @@ public class MilkStat extends Application implements Stat {
   }
   
   @Override
-  public Report showByDate() {
+  public Report showByDate(Date start, Date end) {
     // TODO Auto-generated method stub
     Report dateReport = new Report("Dates Report");
     // for loop to add milk
