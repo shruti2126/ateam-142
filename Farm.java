@@ -8,9 +8,8 @@ public class Farm {
     super();
     this.farmID = farmID;
     this.farmProduct = farmProduct;
-  }
-  
-  
+  }  
+    
   
   @Override
   public int hashCode() {

@@ -1,14 +1,14 @@
 import java.io.File;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javafx.application.Application;
-import javafx.application.HostServices;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -18,7 +18,6 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -43,7 +42,6 @@ public class MilkStat extends Application implements Stat {
   public void setReport(Report report) {
     this.report = report;
   }
-
   
   private List <Milk> storage;
   private List <Farm> farms;  
@@ -150,10 +148,6 @@ public class MilkStat extends Application implements Stat {
         }        
       });
 
-      
-      
-      
-    
          //text field
     
          Label labelTitle = new Label("Milk Weights Analyzer");
@@ -325,26 +319,24 @@ public class MilkStat extends Application implements Stat {
            }      
            
           });
-     
+         
+       // to generate report
        if (annulCheck.isSelected()) {
-         // generate annul report
+          report = showByFullYear();
        }
        else if (monthCheck.isSelected()) {
-         // generate month report
-
+         report = showByMonth();
        }
        
        else if (dateCheck.isSelected()) {
-         // generate date report
-
-
+         report = showByDate();
        }
        else if (farmCheck.isSelected()) {
-         // generate farm report
-         
+         report = showByFarmID();
        }
        else {
          System.out.println("no analyze method is selected");
+         report =null;
        }
         
        b4.setOnAction (new EventHandler<ActionEvent>() {         
@@ -359,8 +351,12 @@ public class MilkStat extends Application implements Stat {
                
                textflow.getChildren().addAll(text);
                textflow.setTextAlignment (TextAlignment.CENTER);
-               Scene sceneOut = new Scene(textflow);
                
+               // put report in sceneOut
+               Group groupOut = new Group();
+               groupOut.getChildren().addAll (textflow);
+               
+               Scene sceneOut = new Scene(groupOut); 
                Stage stage = new Stage();             
                stage.setScene(sceneOut);
                stage.setTitle("Report");
@@ -372,8 +368,7 @@ public class MilkStat extends Application implements Stat {
              else {
                Text text = new Text ("Report is null");
                text.setFont(Font.font("Helvetica",30));
-               text.setFill (Paint.valueOf("blue"));
-               
+               text.setFill (Paint.valueOf("blue"));               
                TextFlow textflow = new TextFlow();
                
                textflow.getChildren().addAll(text);
@@ -400,23 +395,11 @@ public class MilkStat extends Application implements Stat {
            // show report in screen
              if (report != null) {
                // save report as csv
-               Text text = new Text ("Report is As: ");
-               TextFlow textflow = new TextFlow();
-               
-               textflow.getChildren().addAll(text);
-               textflow.setTextAlignment (TextAlignment.CENTER);
-               Scene sceneOut = new Scene(textflow);
-               
-               Stage stage = new Stage();             
-               stage.setScene(sceneOut);
-               stage.setTitle("Report");
-               stage.setHeight(600);
-               stage.setWidth(600);
-               stage.show();
+                              
              }
              
              else {
-               Text text = new Text ("Report is null");
+               Text text = new Text ("Report is null, can't export report");
                text.setFont(Font.font("Helvetica",30));
                text.setFill (Paint.valueOf("blue"));
                
@@ -458,38 +441,72 @@ public class MilkStat extends Application implements Stat {
   
 
   @Override
-  public void readSingleFile() {
+  public void readSingleFile(File file) {
     // TODO Auto-generated method stub
+    storage = new ArrayList<>();
+    farms = new ArrayList<>();
+    monthMap = new HashMap<>();
+    farmMap = new HashMap<>();
     
+    // to do  
+    // read single file, and save data to storage, to farm, tomonthMap and to farmMap
   }
 
   @Override
-  public void readMultipleFile() {
+  public void readMultipleFile(File[] files) {
     // TODO Auto-generated method stub
+    storage = new ArrayList<>();
+    farms = new ArrayList<>();
+    monthMap = new HashMap<>();
+    farmMap = new HashMap<>();
     
+    // put mutiple files to dataframe
   }
 
   @Override
-  public void showByFarmID() {
+  public Report showByFarmID() {
     // TODO Auto-generated method stub
-    
+    Report farmReport = new Report("FarmId Report");
+    // for loop to add milk
+    // report.addMilk ();
+    return farmReport;
   }
 
   @Override
-  public void showByMonth() {
+  public Report showByMonth() {
     // TODO Auto-generated method stub
+    Report monthReport = new Report("Month Report");
+    // for loop to add milk
+    // report.addMilk ();
     
+    return monthReport;
   }
 
   @Override
-  public void showByFullYear() {
+  public Report showByFullYear() {
     // TODO Auto-generated method stub
+    Report annulReport = new Report("Annul Report");
+    // for loop to add milk
+    // report.addMilk ();
     
+    return annulReport;
+  }
+  
+  @Override
+  public Report showByDate() {
+    // TODO Auto-generated method stub
+    Report dateReport = new Report("Dates Report");
+    // for loop to add milk
+    // report.addMilk ();
+    
+    return dateReport;
   }
 
   @Override
-  public File exportReport() {
+  public File exportReport(Report report) {
     // TODO Auto-generated method stub
+    // need to deal with situation when report is null..
+    // used to save report as file
     return null;
   }
 

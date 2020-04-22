@@ -10,7 +10,6 @@ public class Milk implements Comparable<Milk> {
   }
 
 
-
   private Date date;
   private String farmID;
   private int weight;
