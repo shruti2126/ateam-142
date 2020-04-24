@@ -17,7 +17,8 @@
     
     
 5. Other notes or comments to the grader:
-    Run MilkStat to start the statistic analysis of milk weights.
+    2020-04-24 Deb helped Shruti restructure project to match required structure.
+    Run application.Main to start the statistic analysis of milk weights.
     (a) for jdk 11 , user need JavaFX as library and set up VM path (for jdk 8, 9, or 10, JavaFX is embeded )
     (b) can load one or multiple csv files as source file (see sample format)
     (c) can choose show report in screen or save the generated statistics files to a location.
