@@ -11,5 +11,5 @@ public interface Stat {
   Report showByFullYear();
   Report showByDate(Date start, Date end);
   File exportReport(Report report);
-  
+  void clearData();
 }

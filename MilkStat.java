@@ -50,14 +50,13 @@ public class MilkStat extends Application implements Stat {
   private Map<Integer,List<Milk>> monthMap;
   private Map<String, Farm> farmMap;
   private Report report;
-  
-  
+   
   private int month;
   private String id;
   private Date start;
   private Date end;
   
-  File singleFile = null;
+  File singleFile;
   
   public static void main(String[] args) {
     launch(args);
@@ -74,6 +73,7 @@ public class MilkStat extends Application implements Stat {
     Button b2 = new Button("Load Multi Files");      
     Button b4 = new Button("Show Report");   
     Button b5 = new Button("Save Report");      
+    Button b6 = new Button("Clear Data");
     
     b1.setLayoutX(100);
     b1.setLayoutY(100);
@@ -97,10 +97,15 @@ public class MilkStat extends Application implements Stat {
     b4.setPrefWidth(100);
     b4.setPrefHeight(50);
     
-    b5.setLayoutX(450);
+    b5.setLayoutX(250);
     b5.setLayoutY(500);
     b5.setPrefWidth(100);
     b5.setPrefHeight(50);
+    
+    b6.setLayoutX(450);
+    b6.setLayoutY(500);
+    b6.setPrefWidth(100);
+    b6.setPrefHeight(50);
     
     // use css
     b1.setStyle("-fx-background-color:greenyellow;"+
@@ -171,17 +176,17 @@ public class MilkStat extends Application implements Stat {
          labelPartOne.setLayoutY (60);
          
          
-         Label labelPartTwo = new Label("II: Select Analyze (Selection One)");   
+         Label labelPartTwo = new Label("II: Select Analyze");   
          labelPartTwo.setTextFill(Color.web("#0076a3"));
          labelPartTwo.setFont(new Font("Arial", 20));
          labelPartTwo.setLayoutX (50);
-         labelPartTwo.setLayoutY (170);
+         labelPartTwo.setLayoutY (175);
          
          Label labelPartThree = new Label("III: Output Results");
          labelPartThree.setTextFill(Color.web("#0076a3"));
          labelPartThree.setFont(new Font("Arial", 20));
          labelPartThree.setLayoutX (50);
-         labelPartThree.setLayoutY (450);
+         labelPartThree.setLayoutY (455);
          
          
          Label labelAll = new Label("1. Annual Analyze");
@@ -225,9 +230,7 @@ public class MilkStat extends Application implements Stat {
          DatePicker startPicker = new DatePicker();
          DatePicker endPicker = new DatePicker();
          
-         start = Date.from(startPicker.getValue().atStartOfDay(defaultZoneId).toInstant());;
-         end = Date.from(endPicker.getValue().atStartOfDay(defaultZoneId).toInstant());;
-         
+        
          Label labelRange = new Label("3. Date-range Analyze: ");
          labelRange.setLayoutX (100);
          labelRange.setLayoutY (285);
@@ -272,46 +275,7 @@ public class MilkStat extends Application implements Stat {
          comboBoxMonth.setLayoutX (300);
          comboBoxMonth.setLayoutY (240);
          
-         switch((String) comboBoxMonth.getValue()) {
-           case "Janunary":
-             month = 1;
-             break;
-           case "Febrary":
-             month = 2;
-             break;
-           case "March":
-             month = 3;
-             break;
-           case "April":
-             month = 4;
-             break;
-           case "May":
-             month = 5;
-             break;
-           case "June":
-             month = 6;
-             break;
-           case "July":
-             month = 7;
-             break;
-           case "August":
-             month = 8;
-             break;
-           case "September":
-             month = 9;
-             break;
-           case "Octember":
-             month = 10;
-             break;
-           case "November":
-             month = 11;
-             break;
-           case "December":
-             month = 12;
-             break;
-           default:
-             month = 0;
-         }
+
          
          CheckBox monthCheck = new CheckBox ("Month Analyze");
          monthCheck.setLayoutX (420);
@@ -341,6 +305,47 @@ public class MilkStat extends Application implements Stat {
                 annulCheck.setSelected(false);
                 dateCheck.setSelected(false);
                 farmCheck.setSelected(false);
+                
+                switch((String) comboBoxMonth.getValue()) {
+                  case "Janunary":
+                    month = 1;
+                    break;
+                  case "Febrary":
+                    month = 2;
+                    break;
+                  case "March":
+                    month = 3;
+                    break;
+                  case "April":
+                    month = 4;
+                    break;
+                  case "May":
+                    month = 5;
+                    break;
+                  case "June":
+                    month = 6;
+                    break;
+                  case "July":
+                    month = 7;
+                    break;
+                  case "August":
+                    month = 8;
+                    break;
+                  case "September":
+                    month = 9;
+                    break;
+                  case "Octember":
+                    month = 10;
+                    break;
+                  case "November":
+                    month = 11;
+                    break;
+                  case "December":
+                    month = 12;
+                    break;
+                  default:
+                    month = 0;
+                }
               }
           }     
          });
@@ -354,6 +359,9 @@ public class MilkStat extends Application implements Stat {
                  monthCheck.setSelected(false);
                  annulCheck.setSelected(false);
                  farmCheck.setSelected(false);
+                 
+                 start = Date.from(startPicker.getValue().atStartOfDay(defaultZoneId).toInstant());;
+                 end = Date.from(endPicker.getValue().atStartOfDay(defaultZoneId).toInstant());;
                }
            } 
           });
@@ -470,16 +478,23 @@ public class MilkStat extends Application implements Stat {
          }        
        }); 
        
+       b6.setOnAction (new EventHandler<ActionEvent>() {
+         
+         @Override
+         public void handle(ActionEvent event) {
+           clearData();
+         }
+       }); 
+       
        
        
         // add at least one node (borderPane most, or button or layout) to scene  
         Group group = new Group();
-        group.getChildren().addAll (labelPartOne,labelPartTwo,labelPartThree,b1,b2,b4,b5,textFarmID,labelTitle,labelMonth,
+        group.getChildren().addAll (labelPartOne,labelPartTwo,labelPartThree,b1,b2,b4,b5,b6, textFarmID,labelTitle,labelMonth,
             comboBoxMonth,labelAll,annulCheck,labelUploadFile,farmCheck,gpDate,monthCheck,dateCheck);
         
-        Scene scene = new Scene(group);
-        
-    
+        Scene scene = new Scene(group);       
+ 
         // set scene to stage
         primaryStage.setScene(scene);
         primaryStage.setTitle("Milk Statistics");
@@ -509,8 +524,7 @@ public class MilkStat extends Application implements Stat {
     storage = new ArrayList<>();
     farms = new ArrayList<>();
     monthMap = new HashMap<>();
-    farmMap = new HashMap<>();
-    
+    farmMap = new HashMap<>();    
     // put mutiple files to dataframe
   }
 
@@ -559,6 +573,11 @@ public class MilkStat extends Application implements Stat {
     // need to deal with situation when report is null..
     // used to save report as file
     return null;
+  }
+
+  @Override
+  public void clearData() {
+    // reset all data to null
   }
 
 }
