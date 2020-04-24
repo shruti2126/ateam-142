@@ -58,6 +58,9 @@ public class MilkStat extends Application implements Stat {
   
   File singleFile;
   
+  
+  String monthString;
+  
   public static void main(String[] args) {
     launch(args);
 
@@ -306,7 +309,9 @@ public class MilkStat extends Application implements Stat {
                 dateCheck.setSelected(false);
                 farmCheck.setSelected(false);
                 
-                switch((String) comboBoxMonth.getValue()) {
+                try {
+                monthString = (String) comboBoxMonth.getValue();
+                switch(monthString) {
                   case "Janunary":
                     month = 1;
                     break;
@@ -346,7 +351,9 @@ public class MilkStat extends Application implements Stat {
                   default:
                     month = 0;
                 }
-              }
+                }
+               catch (Exception e) {System.out.println("no month selected");  }
+                }
           }     
          });
          
@@ -359,9 +366,11 @@ public class MilkStat extends Application implements Stat {
                  monthCheck.setSelected(false);
                  annulCheck.setSelected(false);
                  farmCheck.setSelected(false);
-                 
-                 start = Date.from(startPicker.getValue().atStartOfDay(defaultZoneId).toInstant());;
-                 end = Date.from(endPicker.getValue().atStartOfDay(defaultZoneId).toInstant());;
+                 try {
+                   start = Date.from(startPicker.getValue().atStartOfDay(defaultZoneId).toInstant());;
+                   end = Date.from(endPicker.getValue().atStartOfDay(defaultZoneId).toInstant());
+                 }
+                 catch (Exception e) {System.out.println("no date is selected"); };
                }
            } 
           });
@@ -425,7 +434,7 @@ public class MilkStat extends Application implements Stat {
              }
              
              else {
-               Text text = new Text ("Report is null");
+               Text text = new Text ("Report is null ");
                text.setFont(Font.font("Helvetica",30));
                text.setFill (Paint.valueOf("blue"));               
                TextFlow textflow = new TextFlow();
