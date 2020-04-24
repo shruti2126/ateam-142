@@ -1,5 +1,6 @@
 package application;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -7,6 +8,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -51,7 +54,7 @@ public class Main  extends Application implements Stat {
   private Map<Integer,List<Milk>> monthMap;
   private Map<String, Farm> farmMap;
   private Report report;
-   
+
   private int month;
   private String id;
   private Date start;
@@ -63,17 +66,15 @@ public class Main  extends Application implements Stat {
   String monthString;
   
   public static void main(String[] args) {
+
     launch(args);
 
   }
 
   @Override
   public void start(Stage primaryStage) throws Exception {
-    // show a website link
-//    HostServices host = getHostServices();
-//    host.showDocument ("www.google.com");
-    
-    Button b1= new Button("Load Single File");   
+ 
+    Button b1=  new Button("Load Single File");   
     Button b2 = new Button("Load Multi Files");      
     Button b4 = new Button("Show Report");   
     Button b5 = new Button("Save Report");      
@@ -83,13 +84,6 @@ public class Main  extends Application implements Stat {
     b1.setLayoutY(100);
     b1.setPrefWidth(100);
     b1.setPrefHeight(50);
-    
-    
-//    b2.setLayoutX(250);
-//    b2.setLayoutY(100);
-//    b2.setPrefWidth(100);
-//    b2.setPrefHeight(50);
-        
     
     b2.setLayoutX(400);
     b2.setLayoutY(100);
@@ -405,7 +399,6 @@ public class Main  extends Application implements Stat {
        }
        else {
          System.out.println("no analyze method is selected");
-         report =null;
        }
         
        b4.setOnAction (new EventHandler<ActionEvent>() {         
@@ -413,13 +406,22 @@ public class Main  extends Application implements Stat {
          public void handle(ActionEvent event) {
            // put event triered by button1 here
            // show report in screen
+//             report = new Report ("report");
              if (report != null) {
                // save report as csv
-               Text text = new Text ("Report is As: ");
-               TextFlow textflow = new TextFlow();
+               Text text = new Text (report.getTitle());
                
-               textflow.getChildren().addAll(text);
+               TextFlow textflow = new TextFlow();
+//               Milk m1 = new Milk (new Date(), "1", 25);
+//               Milk m2 = new Milk (new Date(), "2", 45);
+//               report.addMilk(m1);
+//               report.addMilk(m2);
+
+               
+               Text reportText = new Text (report.toString());
+               textflow.getChildren().addAll(text,reportText);
                textflow.setTextAlignment (TextAlignment.CENTER);
+               
                
                // put report in sceneOut
                Group groupOut = new Group();
@@ -462,9 +464,27 @@ public class Main  extends Application implements Stat {
          public void handle(ActionEvent event) {
            // put event triered by button1 here
            // show report in screen
+           
+//             report = new Report ("report");
+             
              if (report != null) {
-               // save report as csv
-                              
+               ObjectMapper mapper = new ObjectMapper();
+               
+               String json;
+               
+//             Milk m1 = new Milk (new Date(), "1", 25);
+//             Milk m2 = new Milk (new Date(), "2", 45);
+//             report.addMilk(m1);
+//             report.addMilk(m2);
+               
+              try {
+                json = mapper.writeValueAsString(report);               
+                mapper.writeValue (new File ("d://report.txt"), report);
+              } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+              }
+
              }
              
              else {

@@ -1,4 +1,5 @@
 package application;
+import java.util.Date;
 import java.util.TreeSet;
 
 public class Report {
@@ -10,6 +11,7 @@ public class Report {
   public Report(String title) {
     super();
     this.title = title;
+    this.content = new TreeSet<>();
   }
   
   
@@ -59,6 +61,13 @@ public class Report {
     this.content = content;
   }
 
-  
+//  public static void main(String[] args) {
+//    Report report = new Report ("123");
+//    Milk m1 = new Milk (new Date(), "1", 25);
+//    Milk m2 = new Milk (new Date(), "2", 45);
+//    report.addMilk(m1);
+//    report.addMilk(m2);
+//    System.out.println(report.toString());
+//  }
   
 }
