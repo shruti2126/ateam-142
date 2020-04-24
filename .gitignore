@@ -2,4 +2,5 @@
 .project
 .settings
 javafx/*
+a142/*
 application/*.class
