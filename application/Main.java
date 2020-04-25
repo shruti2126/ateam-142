@@ -535,16 +535,69 @@ public class Main  extends Application implements Stat {
   
 
   @Override
-  public void readSingleFile(File file) {
-    // TODO Auto-generated method stub
-    System.out.println("Shruti");
-    storage = new ArrayList<>();
-    farms = new ArrayList<>();
-    monthMap = new HashMap<>();
-    farmMap = new HashMap<>();
-    
-    // to do  
-    // read single file, and save data to storage, to farm, tomonthMap and to farmMap
+ public void readSingleFile(File file) {
+     monthMap = new TreeMap<>();
+     farmMap = new TreeMap<>();
+     BufferedReader fileReader = null;
+      
+     //Delimiter used in CSV file
+     final String DELIMITER = ",";
+     try
+     {
+         String line = "";
+         //Create the file reader
+         fileReader = new BufferedReader(new FileReader(singleFile));
+          
+         //Read the file line by line
+         while ((line = fileReader.readLine()) != null) 
+         {
+             //Get all tokens available in line
+             String[] tokens = line.split(DELIMITER);
+             for(String token : tokens)
+             {
+            	 String date = tokens[0];
+            	 Scanner dateScanner = new Scanner(date);
+            	 dateScanner.useDelimiter("-");
+            	 int[] dateArr = new int[3];
+            	 int i = 0;
+            	 while(dateScanner.hasNext()) {
+            		dateArr[i] = dateScanner.nextInt();
+            		i++;
+            	 }
+            	 @SuppressWarnings("deprecation")
+				 Date milkDate = new Date(Integer.parseInt(dateArr[0]), Integer.parseInt(dateArr[1]),Integer.parseInt(dateArr[2]));
+            	 String farmId = tokens[1];
+            	 String weight = tokens[2];
+            	 Milk milk = new Milk(milkDate, farmId, Integer.parseInt(weight));
+            	 storage.add(milk); //insert milk in Milk list     	 
+            	 int hashCode = farmId.hashCode();
+            	 farmProducts.get(hashCode).add(milk);
+            	 List<Milk> list = monthMap.get(Integer.parseInt(dateArr[1])); //get list of current month
+            	 list.add(milk);
+            	 monthMap.put(dateArr[1], list); //insert data in monthMap
+             }
+             //add farm to farm list
+             for(String farmid : farmProducts.keySet()) {
+            	 Set<Milk> milks = new HashSet<Milk>();
+            	 milks.addAll(farmProducts.get(farmid)); //get the set of milk for farmid
+            	 Farm farm = new Farm(farmid, milks);
+            	 farms.add(farm); 
+             }
+             
+         }
+     } 
+     catch (Exception e) {
+         e.printStackTrace();
+     } 
+     finally
+     {
+         try {
+             fileReader.close();
+         } catch (IOException e) {
+             e.printStackTrace();
+         }
+     }
+}
   }
 
   @Override
