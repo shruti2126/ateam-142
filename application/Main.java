@@ -542,7 +542,6 @@ public class Main  extends Application implements Stat {
   }
   
   
-
   @Override
  public void readSingleFile(File file) {
      monthMap = new TreeMap<>();
@@ -610,14 +609,13 @@ public class Main  extends Application implements Stat {
          }
      }
 }
-  }
+  
 
   @Override
   public void readMultipleFile(File[] files) {
 	for(int i = 0; i < files.length; i++) {
 		readSingleFile(files[i]);
 	}	
-    // put mutiple files to dataframe
   }
 
   @Override
