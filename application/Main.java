@@ -538,6 +538,9 @@ public class Main  extends Application implements Stat {
  public void readSingleFile(File file) {
      monthMap = new TreeMap<>();
      farmMap = new TreeMap<>();
+	 storage = new ArrayList<>();
+     farms = new ArrayList<>();
+	 farmProducts = new TreeMap<>();
      BufferedReader fileReader = null;
       
      //Delimiter used in CSV file
@@ -602,11 +605,9 @@ public class Main  extends Application implements Stat {
 
   @Override
   public void readMultipleFile(File[] files) {
-    // TODO Auto-generated method stub
-    storage = new ArrayList<>();
-    farms = new ArrayList<>();
-    monthMap = new HashMap<>();
-    farmMap = new HashMap<>();    
+	for(int i = 0; i < files.length; i++) {
+		readSingleFile(files[i]);
+	}	
     // put mutiple files to dataframe
   }
 
