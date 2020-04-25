@@ -1,13 +1,21 @@
 package application;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
+import java.util.Set;
+import java.util.TreeMap;
+
 //import com.fasterxml.jackson.core.JsonProcessingException;
 //import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Application;
@@ -52,6 +60,7 @@ public class Main  extends Application implements Stat {
   private List <Milk> storage;
   private List <Farm> farms;  
   private Map<Integer,List<Milk>> monthMap;
+  private Hashtable <String, Set<Milk>> farmProducts; //to store milk by farmId
   private Map<String, Farm> farmMap;
   private Report report;
 
@@ -540,7 +549,7 @@ public class Main  extends Application implements Stat {
      farmMap = new TreeMap<>();
 	 storage = new ArrayList<>();
      farms = new ArrayList<>();
-	 farmProducts = new TreeMap<>();
+	 farmProducts = new Hashtable();
      BufferedReader fileReader = null;
       
      //Delimiter used in CSV file
@@ -561,10 +570,10 @@ public class Main  extends Application implements Stat {
             	 String date = tokens[0];
             	 Scanner dateScanner = new Scanner(date);
             	 dateScanner.useDelimiter("-");
-            	 int[] dateArr = new int[3];
+            	 String[] dateArr = new String[3];
             	 int i = 0;
             	 while(dateScanner.hasNext()) {
-            		dateArr[i] = dateScanner.nextInt();
+            		dateArr[i] = dateScanner.next();
             		i++;
             	 }
             	 @SuppressWarnings("deprecation")
@@ -577,7 +586,7 @@ public class Main  extends Application implements Stat {
             	 farmProducts.get(hashCode).add(milk);
             	 List<Milk> list = monthMap.get(Integer.parseInt(dateArr[1])); //get list of current month
             	 list.add(milk);
-            	 monthMap.put(dateArr[1], list); //insert data in monthMap
+            	 monthMap.put(Integer.parseInt(dateArr[1]), list); //insert data in monthMap
              }
              //add farm to farm list
              for(String farmid : farmProducts.keySet()) {
