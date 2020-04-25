@@ -8,8 +8,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+//import com.fasterxml.jackson.core.JsonProcessingException;
+//import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -406,16 +406,13 @@ public class Main  extends Application implements Stat {
          public void handle(ActionEvent event) {
            // put event triered by button1 here
            // show report in screen
-//             report = new Report ("report");
+
              if (report != null) {
                // save report as csv
                Text text = new Text (report.getTitle());
                
                TextFlow textflow = new TextFlow();
-//               Milk m1 = new Milk (new Date(), "1", 25);
-//               Milk m2 = new Milk (new Date(), "2", 45);
-//               report.addMilk(m1);
-//               report.addMilk(m2);
+
 
                
                Text reportText = new Text (report.toString());
@@ -437,6 +434,7 @@ public class Main  extends Application implements Stat {
              }
              
              else {
+            	 
                Text text = new Text ("Report is null ");
                text.setFont(Font.font("Helvetica",30));
                text.setFill (Paint.valueOf("blue"));               
@@ -468,7 +466,7 @@ public class Main  extends Application implements Stat {
 //             report = new Report ("report");
              
              if (report != null) {
-               ObjectMapper mapper = new ObjectMapper();
+               //ObjectMapper mapper = new ObjectMapper();
                
                String json;
                
@@ -478,8 +476,8 @@ public class Main  extends Application implements Stat {
 //             report.addMilk(m2);
                
               try {
-                json = mapper.writeValueAsString(report);               
-                mapper.writeValue (new File ("d://report.txt"), report);
+               // json = mapper.writeValueAsString(report);               
+               // mapper.writeValue (new File ("d://report.txt"), report);
               } catch (Exception e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -562,6 +560,11 @@ public class Main  extends Application implements Stat {
   public Report showByFarmID(String id) {
     // TODO Auto-generated method stub
     Report farmReport = new Report("FarmId Report");
+    for(int i = 0; i < farms.size(); i++) {
+    	if(farms.get(i).getFarmID().contentEquals(id)) {
+				farmReport.farmReport(farms.get(i));
+			}
+    }
     // for loop to add milk
     // report.addMilk ();
     return farmReport;
@@ -571,8 +574,8 @@ public class Main  extends Application implements Stat {
   public Report showByMonth(int month) {
     // TODO Auto-generated method stub
     Report monthReport = new Report("Month Report");
-    // for loop to add milk
-    // report.addMilk ();
+    monthReport.monthReport(storage, month);
+
     
     return monthReport;
   }
@@ -581,8 +584,7 @@ public class Main  extends Application implements Stat {
   public Report showByFullYear() {
     // TODO Auto-generated method stub
     Report annulReport = new Report("Annul Report");
-    // for loop to add milk
-    // report.addMilk ();
+    annulReport.annualReport(storage);
     
     return annulReport;
   }
@@ -591,6 +593,7 @@ public class Main  extends Application implements Stat {
   public Report showByDate(Date start, Date end) {
     // TODO Auto-generated method stub
     Report dateReport = new Report("Dates Report");
+    dateReport.dateRangeReport(start, end, storage);
     // for loop to add milk
     // report.addMilk ();
     
