@@ -537,6 +537,7 @@ public class Main  extends Application implements Stat {
   @Override
   public void readSingleFile(File file) {
     // TODO Auto-generated method stub
+    System.out.println("Shruti");
     storage = new ArrayList<>();
     farms = new ArrayList<>();
     monthMap = new HashMap<>();
