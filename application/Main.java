@@ -730,9 +730,9 @@ public class Main  extends Application implements Stat {
 	             // reset the existing farm in the farmMap
 	             farmMap.put (createFarmId,existingFarm);
 	             // reset the exiting farm in the farms list
-	             for (int i = 0; i < farms.size(); i++) {
-	                 if (farms.get(i).getFarmID().equals(existingFarm.getFarmID()) ){
-	                   farms.get(i).setFarmProduct(existingSet);;
+	             for (int x = 0; x < farms.size(); x++) {
+	                 if (farms.get(x).getFarmID().equals(existingFarm.getFarmID()) ){
+	                   farms.get(x).setFarmProduct(existingSet);;
 	                 }
 	             }                                      
 	           }
