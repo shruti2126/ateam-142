@@ -39,6 +39,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
 public class Main  extends Application implements Stat {
@@ -80,10 +81,14 @@ public class Main  extends Application implements Stat {
   private String id;
   private Date start;
   private Date end;
-  
-  File singleFile;
-  
   String monthString;
+  
+  
+  // files to be loaded
+  File singleFile;
+  List<File> selectedFiles;
+  
+
   
   public static void main(String[] args) {
 
@@ -160,7 +165,7 @@ public class Main  extends Application implements Stat {
             labelUploadFile.setLayoutX (80);
             labelUploadFile.setLayoutY (155);
             labelUploadFile.setFont (new Font("Arial", 10));
-            b1.setText("uploaded");
+            b1.setText("file uploaded");
             b1.setStyle("-fx-background-color:yellow;"+
                 "-fx-background-radium:30;"
         );
@@ -174,9 +179,27 @@ public class Main  extends Application implements Stat {
         @Override
         public void handle(ActionEvent event) {
           // put event triered by button1 here
-          FileChooser fc2 = new FileChooser();
-          fc2.setTitle("Load Multiple Files");
-          fc2.showOpenDialog(primaryStage);
+          
+          FileChooser fileChooser = new FileChooser();
+          fileChooser.setTitle("Load Multiple Files");
+          fileChooser.getExtensionFilters().addAll(new ExtensionFilter("csv Files", "*.csv"));
+          selectedFiles = fileChooser.showOpenMultipleDialog(primaryStage);
+          
+          if (selectedFiles != null || selectedFiles.size() != 0) {
+              
+//            System.out.println(selectedFiles);
+            String[] filenames = new String[selectedFiles.size()]; 
+            for (int i = 0; i < selectedFiles.size();i++) {
+                filenames[i] = selectedFiles.get(i).toString();
+            }
+            
+            readMultipleFile(filenames);
+            b2.setText("files uploaded");
+            b2.setStyle("-fx-background-color:yellow;"+
+                "-fx-background-radium:30;");
+          }
+
+         
         }        
       });
 
