@@ -139,6 +139,7 @@ public class Main  extends Application implements Stat {
     
     
       Label labelUploadFile = new Label();
+      
       b1.setOnAction (new EventHandler<ActionEvent>() {
         
         @Override
@@ -148,10 +149,10 @@ public class Main  extends Application implements Stat {
           fc1.setTitle("Load Single File");        
           singleFile = fc1.showOpenDialog(primaryStage);
           if (singleFile !=null) {
-            labelUploadFile.setText(singleFile.toString());
-            labelUploadFile.setLayoutX (80);
-            labelUploadFile.setLayoutY (155);
-            labelUploadFile.setFont (new Font("Arial", 10));
+//            labelUploadFile.setText(singleFile.toString());
+//            labelUploadFile.setLayoutX (80);
+//            labelUploadFile.setLayoutY (155);
+//            labelUploadFile.setFont (new Font("Arial", 10));
             b1.setText("file uploaded");
             b1.setStyle("-fx-background-color:yellow;"+
                 "-fx-background-radium:30;"
@@ -576,6 +577,12 @@ public class Main  extends Application implements Stat {
          @Override
          public void handle(ActionEvent event) {
            clearData();
+           b1.setText("Load Single File");
+           b1.setStyle("-fx-background-color:greenyellow;"+
+               "-fx-background-radium:20;");
+           b2.setText("Load Multi Files");
+           b2.setStyle("-fx-background-color:greenyellow;"+
+               "-fx-background-radium:20;");
          }
        }); 
        
@@ -925,7 +932,18 @@ public class Main  extends Application implements Stat {
 
   @Override
   public void clearData() {
-    // reset all data to null
+    storage = null;
+    farms = null;
+    monthMap = null;
+    farmMap = null;
+    report = null;
+    month = 0;
+    id = null;
+    start = null;
+    end = null;
+    monthString = null;
+    singleFile = null;
+    selectedFiles = null;
   }
 
 }
