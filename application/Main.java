@@ -58,7 +58,8 @@ public class Main  extends Application implements Stat {
   }
   
   private List <Milk> storage;
-  private List <Farm> farms;  
+  private List <String> farms;  //list of farmid
+ // private List<Farm> farmObj; //list of farmObj
   private Map<Integer,List<Milk>> monthMap;
   private Hashtable <String, Set<Milk>> farmProducts; //to store milk by farmId
   private Map<String, Farm> farmMap;
@@ -154,6 +155,7 @@ public class Main  extends Application implements Stat {
                 "-fx-background-radium:30;"
         );
           }
+          readSingleFile(singleFile);
         }        
       });
       
@@ -579,21 +581,41 @@ public class Main  extends Application implements Stat {
 				 Date milkDate = new Date(Integer.parseInt(dateArr[0]), Integer.parseInt(dateArr[1]),Integer.parseInt(dateArr[2]));
             	 String farmId = tokens[1];
             	 String weight = tokens[2];
-            	 Milk milk = new Milk(milkDate, farmId, Integer.parseInt(weight));
-            	 storage.add(milk); //insert milk in Milk list     	 
-            	 int hashCode = farmId.hashCode();
-            	 farmProducts.get(hashCode).add(milk);
-            	 List<Milk> list = monthMap.get(Integer.parseInt(dateArr[1])); //get list of current month
-            	 list.add(milk);
-            	 monthMap.put(Integer.parseInt(dateArr[1]), list); //insert data in monthMap
+            	 //Milk milk = new Milk(milkDate, farmId, Integer.parseInt(weight));
+            	 Milk milk1 = new Milk(new Date(), "farm 1", 35);
+            	 storage.add(milk1); //insert milk in Milk list 
+//            	 if(!farms.contains("farm 1")) {
+//            		 Set<Milk> farmProd = new HashSet<Milk>();
+//            		 farmProd.add(milk1);
+//            		 Farm newFarm = new Farm("farm 1", farmProd);
+//            		 farms.add("farm 1");
+//            	 } else {
+//            		 Set<Milk> storedFarmProd = 
+//            	 }
+//                 
+//            	 int hashCode = farmId.hashCode();
+            	 if(farmProducts.containsKey("farm 1")) {
+            		 farmProducts.get("farm 1").add(milk1);
+            	 } else {
+            		 Set<Milk> farmProd = new HashSet<Milk>();
+            		 farmProd.add(milk1);
+            		 farmProducts.put("farm 1", farmProd);
+            	 }
+            	 
+            	// List<Milk> list = monthMap.get(Integer.parseInt(dateArr[1])); //get list of current month
+            	 List<Milk> list = monthMap.get(milk1.getDate());
+            	 list.add(milk1);
+            	 monthMap.put(milk1.getDate().getMonth(), list); //insert data in monthMap
              }
              //add farm to farm list
-             for(String farmid : farmProducts.keySet()) {
-            	 Set<Milk> milks = new HashSet<Milk>();
-            	 milks.addAll(farmProducts.get(farmid)); //get the set of milk for farmid
-            	 Farm farm = new Farm(farmid, milks);
-            	 farms.add(farm); 
-             }
+             Farm farm = new Farm("farm 1", farmProducts.get("farm 1"));
+//             for(String farmid : farmProducts.keySet()) {
+//            	 Set<Milk> milks = new HashSet<Milk>();
+//            	 
+//            	 milks.addAll(farmProducts.get(farmid)); //get the set of milk for farmid
+//            	 Farm farm = new Farm("farm 1", milk 1);
+//            	 farms.add(farm); 
+//             }
              
          }
      } 
@@ -611,6 +633,7 @@ public class Main  extends Application implements Stat {
 }
   
 
+  
   @Override
   public void readMultipleFile(File[] files) {
 	for(int i = 0; i < files.length; i++) {
