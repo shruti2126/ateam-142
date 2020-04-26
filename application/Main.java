@@ -140,7 +140,6 @@ public class Main  extends Application implements Stat {
     
     
     
-      Label labelUploadFile = new Label();
       b1.setOnAction (new EventHandler<ActionEvent>() {
         
         @Override
@@ -150,10 +149,7 @@ public class Main  extends Application implements Stat {
           fc1.setTitle("Load Single File");        
           singleFile = fc1.showOpenDialog(primaryStage);
           if (singleFile !=null) {
-            labelUploadFile.setText(singleFile.toString());
-            labelUploadFile.setLayoutX (80);
-            labelUploadFile.setLayoutY (155);
-            labelUploadFile.setFont (new Font("Arial", 10));
+
             b1.setText("file uploaded");
             b1.setStyle("-fx-background-color:yellow;"+
                 "-fx-background-radium:30;"
@@ -588,6 +584,12 @@ public class Main  extends Application implements Stat {
          @Override
          public void handle(ActionEvent event) {
            clearData();
+           b1.setText("Load Single File");
+           b1.setStyle("-fx-background-color:greenyellow;"+
+               "-fx-background-radium:20;");
+           b2.setText("Load Multi Files");
+           b2.setStyle("-fx-background-color:greenyellow;"+
+               "-fx-background-radium:20;");
          }
        }); 
        
@@ -596,7 +598,7 @@ public class Main  extends Application implements Stat {
         // add at least one node (borderPane most, or button or layout) to scene  
         Group group = new Group();
         group.getChildren().addAll (labelPartOne,labelPartTwo,labelPartThree,b1,b2,b4,b5,b6, textFarmID,labelTitle,labelMonth,
-            comboBoxMonth,labelAll,annulCheck,labelUploadFile,farmCheck,gpDate,monthCheck,dateCheck);
+            comboBoxMonth,labelAll,annulCheck,farmCheck,gpDate,monthCheck,dateCheck);
         
         Scene scene = new Scene(group);       
  
@@ -618,9 +620,7 @@ public class Main  extends Application implements Stat {
      
      // to store all milk in storage
      storage = new ArrayList<>();
-     
-     
-     
+
      monthMap = new TreeMap<>();
      farmMap = new TreeMap<>();
 	 
@@ -639,10 +639,28 @@ public class Main  extends Application implements Stat {
            String[] milkStrings = line.split(cvsSplitBy);
            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
            
-           Date createDate = format.parse(milkStrings[0]);
-           String createFarmId = milkStrings[1];
-           Integer createWeight = Integer.parseInt(milkStrings[2]);
+           Date createDate = null;
+           String createFarmId = null;
+           Integer createWeight = 0;
            
+           try {
+             createDate = format.parse(milkStrings[0]);
+           }
+           catch (Exception e) {
+             continue;
+          }
+
+           createFarmId= milkStrings[1];
+           if (!createFarmId.startsWith("Farm")) {
+             createFarmId = "UnknownFarm";
+           }
+           
+           try {
+             createWeight = Integer.parseInt(milkStrings[2]);
+           }
+           catch (Exception e) {
+             createWeight = 0;
+          }
            // generate milk instance and put into storage
            Milk createMilk= new Milk (createDate,createFarmId,createWeight);
            storage.add (createMilk);
@@ -691,22 +709,17 @@ public class Main  extends Application implements Stat {
              existinMonthMilkList.add (createMilk);
 //             monthMap.put (monthInt,existinMonthMilkList); 
            }
-           
+       
            
            System.out.println(createMilk);
            System.out.println("-----------done with one instance---------------------------");
-           
-
        }
-       
-       
+
      } catch (FileNotFoundException e) {
        e.printStackTrace();
      } catch (IOException e) {
        e.printStackTrace();
-     } catch (ParseException e) {
-       e.printStackTrace();
-     }
+     } 
      
      
      System.out.println("-----------after reading file ---------------------------");
@@ -754,9 +767,28 @@ public class Main  extends Application implements Stat {
 	           String[] milkStrings = line.split(cvsSplitBy);
 	           SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 	           
-	           Date createDate = format.parse(milkStrings[0]);
-	           String createFarmId = milkStrings[1];
-	           Integer createWeight = Integer.parseInt(milkStrings[2]);
+	           Date createDate = null;
+	           String createFarmId = null;
+	           Integer createWeight = 0;
+	           
+	           try {
+	             createDate = format.parse(milkStrings[0]);
+	           }
+	           catch (Exception e) {
+	             continue;
+              }
+
+	           createFarmId= milkStrings[1];
+	           if (!createFarmId.startsWith("Farm")) {
+	             createFarmId = "UnknownFarm";
+	           }
+	           
+	           try {
+	             createWeight = Integer.parseInt(milkStrings[2]);
+	           }
+	           catch (Exception e) {
+	             createWeight = 0;
+              }
 	           
 	           // generate milk instance and put into storage
 	           Milk createMilk= new Milk (createDate,createFarmId,createWeight);
@@ -810,7 +842,6 @@ public class Main  extends Application implements Stat {
 	           
 	           System.out.println(createMilk);
 	           System.out.println("-----------done with one instance---------------------------");
-	           
 
 	       }
 	       
@@ -819,10 +850,26 @@ public class Main  extends Application implements Stat {
 	       e.printStackTrace();
 	     } catch (IOException e) {
 	       e.printStackTrace();
-	     } catch (ParseException e) {
-	       e.printStackTrace();
-	     }
+	     } 
 	}
+	 
+     if (monthMap != null) {
+       for (Integer key: monthMap.keySet()) {
+           System.out.println("month " + key + " : " + monthMap.get(key));
+       }
+     }
+     
+     if (farmMap != null) {
+       for (String key: farmMap.keySet()) {
+           System.out.println("farm infor: " + key + " : " + farmMap.get(key).getFarmID());
+       }
+     }
+     
+     if (farms != null) {
+       for (Farm farm: farms) {
+           System.out.println("farm is " + farm.getFarmID() + " " + farm.getFarmProduct());
+       }
+     }
 		 
   }
 
@@ -882,6 +929,18 @@ public class Main  extends Application implements Stat {
   @Override
   public void clearData() {
     // reset all data to null
-  }
+    storage = null;
+    farms = null;
+    monthMap = null;
+    farmMap = null;
+    report = null;
+    month = 0;
+    id = null;
+    start = null;
+    end = null;
+    monthString = null;
+    singleFile = null;
+    selectedFiles = null;
+    }
 
 }
