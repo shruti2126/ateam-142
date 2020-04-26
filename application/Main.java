@@ -91,7 +91,7 @@ public class Main  extends Application implements Stat {
     Button b1=  new Button("Load Single File");   
     Button b2 = new Button("Load Multi Files");      
     Button b4 = new Button("Show Report");   
-    Button b5 = new Button("Save Report");      
+    Button b5 = new Button("Save CSV Report");      
     Button b6 = new Button("Clear Data");
     
     b1.setLayoutX(100);
@@ -447,9 +447,7 @@ public class Main  extends Application implements Stat {
                System.out.println("no analyze method is selected");
              }
              
-             System.out.println("----ss---------------------------");
              System.out.println("current report is " + report.getTitle());
-             System.out.println("----ss---------------------------");
              
              
              if (report != null) {
@@ -460,16 +458,12 @@ public class Main  extends Application implements Stat {
                TextFlow textflow = new TextFlow();
                textflow.getChildren().addAll(text);
                textflow.setTextAlignment (TextAlignment.CENTER);
-               
-               
-               
+        
                // put report in sceneOut
                Group groupOut = new Group();
                groupOut.getChildren().addAll (report.createPieChart());
                groupOut.getChildren().add(textflow);
-               
-               
-               
+
                Scene sceneOut = new Scene(groupOut); 
                Stage stage = new Stage();             
                stage.setScene(sceneOut);
@@ -480,7 +474,7 @@ public class Main  extends Application implements Stat {
              }
              
              else {
-               
+            
                Text text = new Text ("Report is null ");
                text.setFont(Font.font("Helvetica",30));
                text.setFill (Paint.valueOf("blue"));               
@@ -610,11 +604,7 @@ public class Main  extends Application implements Stat {
         primaryStage.show();
     
   }
-  
-  
-  /**
-   * to read filename and push data into storage, farm and other containers
-   */
+
   @Override
  public void readSingleFile(String filename) {
      
@@ -745,8 +735,8 @@ public class Main  extends Application implements Stat {
 }
   
 
-  @Override
-  public void readMultipleFile(String[] filenames) {
+ @Override
+ public void readMultipleFile(String[] filenames) {
      // to store all milk in storage
      storage = new ArrayList<>();
      
@@ -875,9 +865,9 @@ public class Main  extends Application implements Stat {
 		 
   }
 
-  @Override
-  public Report showByFarmID(String id) {
-    // TODO Auto-generated method stub
+ @Override
+ public Report showByFarmID(String id) {
+    // generate farmId report
     Report farmReport = new Report("FarmId Report");
     
     for(int i = 0; i < farms.size(); i++) {
@@ -885,13 +875,12 @@ public class Main  extends Application implements Stat {
 				farmReport.farmReport(farms.get(i));
 			}
     }
-    // for loop to add milk
-    // report.addMilk ();
+
     return farmReport;
   }
 
-  @Override
-  public Report showByMonth(int month) {
+ @Override
+ public Report showByMonth(int month) {
     // TODO Auto-generated method stub
     Report monthReport = new Report("Month Report");
     monthReport.monthReport(storage, month);
@@ -900,8 +889,8 @@ public class Main  extends Application implements Stat {
     return monthReport;
   }
 
-  @Override
-  public Report showByFullYear() {
+ @Override
+ public Report showByFullYear() {
     // TODO Auto-generated method stub
     Report annulReport = new Report("Annul Report");
     annulReport.annualReport(storage);
@@ -909,8 +898,8 @@ public class Main  extends Application implements Stat {
     return annulReport;
   }
   
-  @Override
-  public Report showByDate(LocalDate start, LocalDate end) {
+ @Override
+ public Report showByDate(LocalDate start, LocalDate end) {
     // TODO Auto-generated method stub
     Report dateReport = new Report("Dates Report");
     dateReport.dateRangeReport(start, end, storage);
@@ -920,16 +909,16 @@ public class Main  extends Application implements Stat {
     return dateReport;
   }
 
-  @Override
-  public File exportReport(Report report) {
+ @Override
+ public File exportReport(Report report) {
     // TODO Auto-generated method stub
     // need to deal with situation when report is null..
     // used to save report as file
     return null;
   }
 
-  @Override
-  public void clearData() {
+ @Override
+ public void clearData() {
     // reset all data to null
     storage = null;
     farms = null;
