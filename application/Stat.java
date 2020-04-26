@@ -1,5 +1,6 @@
 package application;
 import java.io.File;
+import java.time.LocalDate;
 import java.util.Date;
 
 // this is the interface for the main class
@@ -10,7 +11,7 @@ public interface Stat {
   Report showByFarmID(String id);
   Report showByMonth(int momth);
   Report showByFullYear();
-  Report showByDate(Date start, Date end);
+  Report showByDate(LocalDate start, LocalDate end);
   File exportReport(Report report);
   void clearData();
 }

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,6 +33,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
@@ -139,7 +141,6 @@ public class Main  extends Application implements Stat {
     
     
       Label labelUploadFile = new Label();
-      
       b1.setOnAction (new EventHandler<ActionEvent>() {
         
         @Override
@@ -149,10 +150,10 @@ public class Main  extends Application implements Stat {
           fc1.setTitle("Load Single File");        
           singleFile = fc1.showOpenDialog(primaryStage);
           if (singleFile !=null) {
-//            labelUploadFile.setText(singleFile.toString());
-//            labelUploadFile.setLayoutX (80);
-//            labelUploadFile.setLayoutY (155);
-//            labelUploadFile.setFont (new Font("Arial", 10));
+            labelUploadFile.setText(singleFile.toString());
+            labelUploadFile.setLayoutX (80);
+            labelUploadFile.setLayoutY (155);
+            labelUploadFile.setFont (new Font("Arial", 10));
             b1.setText("file uploaded");
             b1.setStyle("-fx-background-color:yellow;"+
                 "-fx-background-radium:30;"
@@ -248,6 +249,7 @@ public class Main  extends Application implements Stat {
          
          id = textFarmID.getText();
          
+         
          Tooltip tip = new Tooltip ("This is the farmID");
          tip.setFont (Font.font(25));      
          textFarmID.setTooltip (tip);
@@ -258,6 +260,7 @@ public class Main  extends Application implements Stat {
          ZoneId defaultZoneId = ZoneId.systemDefault();
 
          DatePicker startPicker = new DatePicker();
+         
          DatePicker endPicker = new DatePicker();
          
         
@@ -414,6 +417,7 @@ public class Main  extends Application implements Stat {
                }
            }     
           });
+       
          
 
        b4.setOnAction (new EventHandler<ActionEvent>() {         
@@ -434,10 +438,13 @@ public class Main  extends Application implements Stat {
              
              else if (dateCheck.isSelected()) {
                System.out.println("date range report to be generated");
-               report = showByDate(start,end);
+               
+               report = showByDate(startPicker.getValue(),endPicker.getValue());
              }
              else if (farmCheck.isSelected()) {
                System.out.println("farm report to be generated");
+              id = textFarmID.getText();
+             
                report = showByFarmID(id);
              }
              else {
@@ -454,15 +461,18 @@ public class Main  extends Application implements Stat {
                Text text = new Text (report.getTitle());   
                text.setFont(Font.font("Helvetica",30));
                text.setFill (Paint.valueOf("blue")); 
-               
                TextFlow textflow = new TextFlow();
                textflow.getChildren().addAll(text);
                textflow.setTextAlignment (TextAlignment.CENTER);
                
                
+               
                // put report in sceneOut
                Group groupOut = new Group();
-               groupOut.getChildren().addAll (textflow);
+               groupOut.getChildren().addAll (report.createPieChart());
+               groupOut.getChildren().add(textflow);
+               
+               
                
                Scene sceneOut = new Scene(groupOut); 
                Stage stage = new Stage();             
@@ -513,7 +523,8 @@ public class Main  extends Application implements Stat {
              
              else if (dateCheck.isSelected()) {
                System.out.println("date range report to be generated");
-               report = showByDate(start,end);
+             
+               report = showByDate(startPicker.getValue(),endPicker.getValue());
              }
              else if (farmCheck.isSelected()) {
                System.out.println("farm report to be generated");
@@ -577,12 +588,6 @@ public class Main  extends Application implements Stat {
          @Override
          public void handle(ActionEvent event) {
            clearData();
-           b1.setText("Load Single File");
-           b1.setStyle("-fx-background-color:greenyellow;"+
-               "-fx-background-radium:20;");
-           b2.setText("Load Multi Files");
-           b2.setStyle("-fx-background-color:greenyellow;"+
-               "-fx-background-radium:20;");
          }
        }); 
        
@@ -613,11 +618,16 @@ public class Main  extends Application implements Stat {
      
      // to store all milk in storage
      storage = new ArrayList<>();
+     
+     
+     
      monthMap = new TreeMap<>();
      farmMap = new TreeMap<>();
+	 
      farms = new ArrayList<>();
-
-     // start reading file
+	 
+	 
+	 // start reading file
      BufferedReader br = null;
      String line = "";
      String cvsSplitBy = ",";
@@ -628,95 +638,73 @@ public class Main  extends Application implements Stat {
        while ((line = br.readLine()) != null) {
            String[] milkStrings = line.split(cvsSplitBy);
            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-           Date createDate = null;
-           String createFarmId = null;
-           Integer createWeight = 0;
            
+           Date createDate = format.parse(milkStrings[0]);
+           String createFarmId = milkStrings[1];
+           Integer createWeight = Integer.parseInt(milkStrings[2]);
            
-          // this is to test date and pass its value to createDate
-           // if createDate is invalid, pass this record, not include this record in our final record
-           try {
-             createDate = format.parse(milkStrings[0]);
-             // this is to test farmID and pass its value to createFarmID
-             try {
-               createFarmId = milkStrings[1];
-             }
-             catch (Exception e) {
-               createFarmId = null;
-            }           
-             // set missing value or wrong format value to UnknownFarm
-             if (createFarmId == null || !createFarmId.startsWith("Farm")) {
-               createFarmId = "UnknownFarm";
-             }
-             
-             // this is to test weight and pass its value to createWeight
-             try {
-               createWeight = Integer.parseInt(milkStrings[2]);
-             }
-             catch (Exception e) {
-               createWeight = 0;
-            }
-             
-             // generate milk instance and put into storage
-             Milk createMilk= new Milk (createDate,createFarmId,createWeight);
-             storage.add (createMilk);
-             
-             // to generate farmMap and push data into farmMap
-             if (!farmMap.containsKey(createFarmId)) {
-                 Farm createFarm = new Farm (createFarmId, new TreeSet<>());
-                 TreeSet<Milk> currentSet = createFarm.getFarmProduct();
-                 currentSet.add(createMilk);
-                 createFarm.setFarmProduct(currentSet);
-                 
-                 // put the newly generated farm into map
-                 farmMap.put (createFarmId,createFarm);
-                 // add newly generated farm into farms list
-                 farms.add (createFarm);
-             }
-             // if this farm is already in farmMap
-             else {
-               Farm existingFarm = farmMap.get(createFarmId); 
-               TreeSet<Milk> existingSet = existingFarm.getFarmProduct();
-               existingSet.add(createMilk);
-               existingFarm.setFarmProduct(existingSet);            
+           // generate milk instance and put into storage
+           Milk createMilk= new Milk (createDate,createFarmId,createWeight);
+           storage.add (createMilk);
+           
+           // to generate farmMap and push data into farmMap
+           if (!farmMap.containsKey(createFarmId)) {
+               Farm createFarm = new Farm (createFarmId, new TreeSet<>());
+               TreeSet<Milk> currentSet = createFarm.getFarmProduct();
+               currentSet.add(createMilk);
+               createFarm.setFarmProduct(currentSet);
                
-               // reset the existing farm in the farmMap
-               farmMap.put (createFarmId,existingFarm);
-               // reset the exiting farm in the farms list
-               for (int i = 0; i < farms.size(); i++) {
-                   if (farms.get(i).getFarmID().equals(existingFarm.getFarmID()) ){
-                     farms.get(i).setFarmProduct(existingSet);;
-                   }
-               }                                      
-             }
-             
-             // add milk to month map
-             Integer monthInt = createDate.getMonth() + 1;
-             
-             // for the first time, put the month (1,2,3 ..) as key, and put a new list with milk to the map
-             if (!monthMap.containsKey(monthInt)) {
-               List<Milk> monthMilkList = new ArrayList<>();
-               monthMilkList.add (createMilk);
-               monthMap.put (monthInt,monthMilkList);             
-             }
-             // if the month map with the key (month), add milk to existing list and put back to map
-             else {
-               List<Milk> existinMonthMilkList = monthMap.get(monthInt);
-               existinMonthMilkList.add (createMilk);
-               monthMap.put (monthInt,existinMonthMilkList); 
-             }
-             
-             System.out.println(createMilk);
-             System.out.println("-----------done with one instance---------------------------");
+               // put the newly generated farm into map
+               farmMap.put (createFarmId,createFarm);
+               // add newly generated farm into farms list
+               farms.add (createFarm);
            }
-           catch (Exception e) {
-             System.out.println("this date is invalid, pass this record");
-          }
-       }
+           // if this farm is already in farmMap
+           else {
+             Farm existingFarm = farmMap.get(createFarmId); 
+             TreeSet<Milk> existingSet = existingFarm.getFarmProduct();
+             existingSet.add(createMilk);
+             existingFarm.setFarmProduct(existingSet);            
+             
+             // reset the existing farm in the farmMap
+             farmMap.put (createFarmId,existingFarm);
+             // reset the exiting farm in the farms list
+             for (int i = 0; i < farms.size(); i++) {
+                 if (farms.get(i).getFarmID().equals(existingFarm.getFarmID()) ){
+                   farms.get(i).setFarmProduct(existingSet);;
+                 }
+             }                                      
+           }
+           
+           // add milk to month map
+           Integer monthInt = createDate.getMonth() + 1;
+           
+           // for the first time, put the month (1,2,3 ..) as key, and put a new list with milk to the map
+           if (!monthMap.containsKey(monthInt)) {
+             List<Milk> monthMilkList = new ArrayList<>();
+             monthMilkList.add (createMilk);
+             monthMap.put (monthInt,monthMilkList);             
+           }
+           // if the month map with the key (month), add milk to existing list and put back to map
+           else {
+             List<Milk> existinMonthMilkList = monthMap.get(monthInt);
+             existinMonthMilkList.add (createMilk);
+//             monthMap.put (monthInt,existinMonthMilkList); 
+           }
+           
+           
+           System.out.println(createMilk);
+           System.out.println("-----------done with one instance---------------------------");
+           
 
+       }
+       
+       
      } catch (FileNotFoundException e) {
        e.printStackTrace();
      } catch (IOException e) {
+       e.printStackTrace();
+     } catch (ParseException e) {
        e.printStackTrace();
      }
      
@@ -754,6 +742,7 @@ public class Main  extends Application implements Stat {
      farms = new ArrayList<>();
 		 
 	 for(int i = 0; i < filenames.length; i++) {	 
+		// start reading file
 	     BufferedReader br = null;
 	     String line = "";
 	     String cvsSplitBy = ",";
@@ -764,124 +753,84 @@ public class Main  extends Application implements Stat {
 	       while ((line = br.readLine()) != null) {
 	           String[] milkStrings = line.split(cvsSplitBy);
 	           SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-	           Date createDate = null;
-	           String createFarmId = null;
-	           Integer createWeight = 0;
 	           
+	           Date createDate = format.parse(milkStrings[0]);
+	           String createFarmId = milkStrings[1];
+	           Integer createWeight = Integer.parseInt(milkStrings[2]);
 	           
-	          // this is to test date and pass its value to createDate
-	           // if createDate is invalid, pass this record, not include this record in our final record
-	           try {
-	             createDate = format.parse(milkStrings[0]);
-	             // this is to test farmID and pass its value to createFarmID
-	             try {
-	               createFarmId = milkStrings[1];
-	             }
-	             catch (Exception e) {
-	               createFarmId = null;
-	            }           
-	             // set missing value or wrong format value to UnknownFarm
-	             if (createFarmId == null || !createFarmId.startsWith("Farm")) {
-	               createFarmId = "UnknownFarm";
-	             }
-	             
-	             // this is to test weight and pass its value to createWeight
-	             try {
-	               createWeight = Integer.parseInt(milkStrings[2]);
-	             }
-	             catch (Exception e) {
-	               createWeight = 0;
-	            }
-	             
-	             // generate milk instance and put into storage
-	             Milk createMilk= new Milk (createDate,createFarmId,createWeight);
-	             storage.add (createMilk);
-	             
-	             // to generate farmMap and push data into farmMap
-	             if (!farmMap.containsKey(createFarmId)) {
-	                 Farm createFarm = new Farm (createFarmId, new TreeSet<>());
-	                 TreeSet<Milk> currentSet = createFarm.getFarmProduct();
-	                 currentSet.add(createMilk);
-	                 createFarm.setFarmProduct(currentSet);
-	                 
-	                 // put the newly generated farm into map
-	                 farmMap.put (createFarmId,createFarm);
-	                 // add newly generated farm into farms list
-	                 farms.add (createFarm);
-	             }
-	             // if this farm is already in farmMap
-	             else {
-	               Farm existingFarm = farmMap.get(createFarmId); 
-	               TreeSet<Milk> existingSet = existingFarm.getFarmProduct();
-	               existingSet.add(createMilk);
-	               existingFarm.setFarmProduct(existingSet);            
+	           // generate milk instance and put into storage
+	           Milk createMilk= new Milk (createDate,createFarmId,createWeight);
+	           storage.add (createMilk);
+	           
+	           // to generate farmMap and push data into farmMap
+	           if (!farmMap.containsKey(createFarmId)) {
+	               Farm createFarm = new Farm (createFarmId, new TreeSet<>());
+	               TreeSet<Milk> currentSet = createFarm.getFarmProduct();
+	               currentSet.add(createMilk);
+	               createFarm.setFarmProduct(currentSet);
 	               
-	               // reset the existing farm in the farmMap
-	               farmMap.put (createFarmId,existingFarm);
-	               // reset the exiting farm in the farms list
-	               for (int j = 0; j < farms.size(); j++) {
-	                   if (farms.get(j).getFarmID().equals(existingFarm.getFarmID()) ){
-	                     farms.get(j).setFarmProduct(existingSet);;
-	                   }
-	               }                                      
-	             }
-	             
-	             // add milk to month map
-	             Integer monthInt = createDate.getMonth() + 1;
-	             
-	             // for the first time, put the month (1,2,3 ..) as key, and put a new list with milk to the map
-	             if (!monthMap.containsKey(monthInt)) {
-	               List<Milk> monthMilkList = new ArrayList<>();
-	               monthMilkList.add (createMilk);
-	               monthMap.put (monthInt,monthMilkList);             
-	             }
-	             // if the month map with the key (month), add milk to existing list and put back to map
-	             else {
-	               List<Milk> existinMonthMilkList = monthMap.get(monthInt);
-	               existinMonthMilkList.add (createMilk);
-	               monthMap.put (monthInt,existinMonthMilkList); 
-	             }
-	             
-	             System.out.println(createMilk);
-	             System.out.println("-----------done with one instance---------------------------");
+	               // put the newly generated farm into map
+	               farmMap.put (createFarmId,createFarm);
+	               // add newly generated farm into farms list
+	               farms.add (createFarm);
 	           }
-	           catch (Exception e) {
-	             System.out.println("this date is invalid, pass this record");
-	          }
-	       }
+	           // if this farm is already in farmMap
+	           else {
+	             Farm existingFarm = farmMap.get(createFarmId); 
+	             TreeSet<Milk> existingSet = existingFarm.getFarmProduct();
+	             existingSet.add(createMilk);
+	             existingFarm.setFarmProduct(existingSet);            
+	             
+	             // reset the existing farm in the farmMap
+	             farmMap.put (createFarmId,existingFarm);
+	             // reset the exiting farm in the farms list
+	             for (int x = 0; x < farms.size(); x++) {
+	                 if (farms.get(x).getFarmID().equals(existingFarm.getFarmID()) ){
+	                   farms.get(x).setFarmProduct(existingSet);;
+	                 }
+	             }                                      
+	           }
+	           
+	           // add milk to month map
+	           Integer monthInt = createDate.getMonth() + 1;
+	           
+	           // for the first time, put the month (1,2,3 ..) as key, and put a new list with milk to the map
+	           if (!monthMap.containsKey(monthInt)) {
+	             List<Milk> monthMilkList = new ArrayList<>();
+	             monthMilkList.add (createMilk);
+	             monthMap.put (monthInt,monthMilkList);             
+	           }
+	           // if the month map with the key (month), add milk to existing list and put back to map
+	           else {
+	             List<Milk> existinMonthMilkList = monthMap.get(monthInt);
+	             existinMonthMilkList.add (createMilk);
+//	             monthMap.put (monthInt,existinMonthMilkList); 
+	           }
+	           
+	           
+	           System.out.println(createMilk);
+	           System.out.println("-----------done with one instance---------------------------");
+	           
 
+	       }
+	       
+	       
 	     } catch (FileNotFoundException e) {
 	       e.printStackTrace();
 	     } catch (IOException e) {
 	       e.printStackTrace();
+	     } catch (ParseException e) {
+	       e.printStackTrace();
 	     }
-	     System.out.println("-----------after reading file ---------------------------");
-     
-	 } 
-	 
-     if (monthMap != null) {
-       for (Integer key: monthMap.keySet()) {
-           System.out.println("month " + key + " : " + monthMap.get(key));
-       }
-     }
-     
-     if (farmMap != null) {
-       for (String key: farmMap.keySet()) {
-           System.out.println("farm infor: " + key + " : " + farmMap.get(key).getFarmID());
-       }
-     }
-     
-     if (farms != null) {
-       for (Farm farm: farms) {
-           System.out.println("farm is " + farm.getFarmID() + " " + farm.getFarmProduct());
-       }
-     }
+	}
+		 
   }
 
   @Override
   public Report showByFarmID(String id) {
     // TODO Auto-generated method stub
     Report farmReport = new Report("FarmId Report");
+    
     for(int i = 0; i < farms.size(); i++) {
        	if(farms.get(i).getFarmID().contentEquals(id)) {
 				farmReport.farmReport(farms.get(i));
@@ -912,7 +861,7 @@ public class Main  extends Application implements Stat {
   }
   
   @Override
-  public Report showByDate(Date start, Date end) {
+  public Report showByDate(LocalDate start, LocalDate end) {
     // TODO Auto-generated method stub
     Report dateReport = new Report("Dates Report");
     dateReport.dateRangeReport(start, end, storage);
@@ -932,18 +881,7 @@ public class Main  extends Application implements Stat {
 
   @Override
   public void clearData() {
-    storage = null;
-    farms = null;
-    monthMap = null;
-    farmMap = null;
-    report = null;
-    month = 0;
-    id = null;
-    start = null;
-    end = null;
-    monthString = null;
-    singleFile = null;
-    selectedFiles = null;
+    // reset all data to null
   }
 
 }
