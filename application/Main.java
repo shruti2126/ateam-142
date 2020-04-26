@@ -1,21 +1,20 @@
 package application;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeMap;
-
+import java.util.TreeSet;
 //import com.fasterxml.jackson.core.JsonProcessingException;
 //import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Application;
@@ -58,11 +57,23 @@ public class Main  extends Application implements Stat {
   }
   
   private List <Milk> storage;
-  private List <String> farms;  //list of farmid
+  
+  
+  private List <Farm> farms;  //list of farms
+  
+  
  // private List<Farm> farmObj; //list of farmObj
   private Map<Integer,List<Milk>> monthMap;
-  private Hashtable <String, Set<Milk>> farmProducts; //to store milk by farmId
+  
+  // farmMap, with name as string, and Farm as its value
   private Map<String, Farm> farmMap;
+  
+  
+  // do we need this ?  
+  private Hashtable <String, Set<Milk>> farmProducts; //to store milk specified by farmId
+  
+
+  // report to export
   private Report report;
 
   private int month;
@@ -71,7 +82,6 @@ public class Main  extends Application implements Stat {
   private Date end;
   
   File singleFile;
-  
   
   String monthString;
   
@@ -155,7 +165,7 @@ public class Main  extends Application implements Stat {
                 "-fx-background-radium:30;"
         );
           }
-          readSingleFile(singleFile);
+          readSingleFile(singleFile.toString());
         }        
       });
       
@@ -544,101 +554,133 @@ public class Main  extends Application implements Stat {
   }
   
   
+  /**
+   * to read filename and push data into storage, farm and other containers
+   */
   @Override
- public void readSingleFile(File file) {
+ public void readSingleFile(String filename) {
+     
+     // to store all milk in storage
+     storage = new ArrayList<>();
+     
+     
+     
      monthMap = new TreeMap<>();
      farmMap = new TreeMap<>();
-	 storage = new ArrayList<>();
+	 
      farms = new ArrayList<>();
-	 farmProducts = new Hashtable();
-     BufferedReader fileReader = null;
-      
-     //Delimiter used in CSV file
-     final String DELIMITER = ",";
-     try
-     {
-         String line = "";
-         //Create the file reader
-         fileReader = new BufferedReader(new FileReader(singleFile));
-          
-         //Read the file line by line
-         while ((line = fileReader.readLine()) != null) 
-         {
-             //Get all tokens available in line
-             String[] tokens = line.split(DELIMITER);
-             for(String token : tokens)
-             {
-            	 String date = tokens[0];
-            	 Scanner dateScanner = new Scanner(date);
-            	 dateScanner.useDelimiter("-");
-            	 String[] dateArr = new String[3];
-            	 int i = 0;
-            	 while(dateScanner.hasNext()) {
-            		dateArr[i] = dateScanner.next();
-            		i++;
-            	 }
-            	 @SuppressWarnings("deprecation")
-				 Date milkDate = new Date(Integer.parseInt(dateArr[0]), Integer.parseInt(dateArr[1]),Integer.parseInt(dateArr[2]));
-            	 String farmId = tokens[1];
-            	 String weight = tokens[2];
-            	 //Milk milk = new Milk(milkDate, farmId, Integer.parseInt(weight));
-            	 Milk milk1 = new Milk(new Date(), "farm 1", 35);
-            	 storage.add(milk1); //insert milk in Milk list 
-//            	 if(!farms.contains("farm 1")) {
-//            		 Set<Milk> farmProd = new HashSet<Milk>();
-//            		 farmProd.add(milk1);
-//            		 Farm newFarm = new Farm("farm 1", farmProd);
-//            		 farms.add("farm 1");
-//            	 } else {
-//            		 Set<Milk> storedFarmProd = 
-//            	 }
-//                 
-//            	 int hashCode = farmId.hashCode();
-            	 if(farmProducts.containsKey("farm 1")) {
-            		 farmProducts.get("farm 1").add(milk1);
-            	 } else {
-            		 Set<Milk> farmProd = new HashSet<Milk>();
-            		 farmProd.add(milk1);
-            		 farmProducts.put("farm 1", farmProd);
-            	 }
-            	 
-            	// List<Milk> list = monthMap.get(Integer.parseInt(dateArr[1])); //get list of current month
-            	 List<Milk> list = monthMap.get(milk1.getDate());
-            	 list.add(milk1);
-            	 monthMap.put(milk1.getDate().getMonth(), list); //insert data in monthMap
-             }
-             //add farm to farm list
-             Farm farm = new Farm("farm 1", farmProducts.get("farm 1"));
-//             for(String farmid : farmProducts.keySet()) {
-//            	 Set<Milk> milks = new HashSet<Milk>();
-//            	 
-//            	 milks.addAll(farmProducts.get(farmid)); //get the set of milk for farmid
-//            	 Farm farm = new Farm("farm 1", milk 1);
-//            	 farms.add(farm); 
-//             }
+	 farmProducts = new Hashtable<>();
+	 
+	 
+	 // start reading file
+     BufferedReader br = null;
+     String line = "";
+     String cvsSplitBy = ",";
+     
+     try {
+       br = new BufferedReader(new FileReader(filename));
+       br.readLine();
+       while ((line = br.readLine()) != null) {
+           String[] milkStrings = line.split(cvsSplitBy);
+           SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+           
+           Date createDate = format.parse(milkStrings[0]);
+           String createFarmId = milkStrings[1];
+           Integer createWeight = Integer.parseInt(milkStrings[2]);
+           
+           // generate milk instance and put into storage
+           Milk createMilk= new Milk (createDate,createFarmId,createWeight);
+           storage.add (createMilk);
+           
+           
+           // to generate farmMap and push data into farmMap
+           if (!farmMap.containsKey(createFarmId)) {
+               Farm createFarm = new Farm (createFarmId, new TreeSet<>());
+               TreeSet<Milk> currentSet = createFarm.getFarmProduct();
+               currentSet.add(createMilk);
+               createFarm.setFarmProduct(currentSet);
+               
+               // put the newly generated farm into map
+               farmMap.put (createFarmId,createFarm);
+               // add newly generated farm into farms list
+               farms.add (createFarm);
+           }
+           // if this farm is already in farmMap
+           else {
+             Farm existingFarm = farmMap.get(createFarmId); 
+             TreeSet<Milk> existingSet = existingFarm.getFarmProduct();
+             existingSet.add(createMilk);
+             existingFarm.setFarmProduct(existingSet);            
              
-         }
-     } 
-     catch (Exception e) {
-         e.printStackTrace();
-     } 
-     finally
-     {
-         try {
-             fileReader.close();
-         } catch (IOException e) {
-             e.printStackTrace();
-         }
+             // reset the existing farm in the farmMap
+             farmMap.put (createFarmId,existingFarm);
+             // reset the exiting farm in the farms list
+             for (int i = 0; i < farms.size(); i++) {
+                 if (farms.get(i).getFarmID().equals(existingFarm.getFarmID()) ){
+                   farms.get(i).setFarmProduct(existingSet);;
+                 }
+             }                                      
+           }
+           
+           // add milk to month map
+           Integer monthInt = createDate.getMonth() + 1;
+           
+           // for the first time, put the month (1,2,3 ..) as key, and put a new list with milk to the map
+           if (!monthMap.containsKey(monthInt)) {
+             List<Milk> monthMilkList = new ArrayList<>();
+             monthMilkList.add (createMilk);
+             monthMap.put (monthInt,monthMilkList);             
+           }
+           // if the month map with the key (month), add milk to existing list and put back to map
+           else {
+             List<Milk> existinMonthMilkList = monthMap.get(monthInt);
+             existinMonthMilkList.add (createMilk);
+             monthMap.put (monthInt,existinMonthMilkList); 
+           }
+           
+           
+           System.out.println(createMilk);
+           System.out.println("-----------done with one instance---------------------------");
+           
+
+       }
+       
+       
+     } catch (FileNotFoundException e) {
+       e.printStackTrace();
+     } catch (IOException e) {
+       e.printStackTrace();
+     } catch (ParseException e) {
+       e.printStackTrace();
+     }
+     
+     
+     System.out.println("-----------after reading file ---------------------------");
+     
+     if (monthMap != null) {
+       for (Integer key: monthMap.keySet()) {
+           System.out.println("month " + key + " : " + monthMap.get(key));
+       }
+     }
+     
+     if (farmMap != null) {
+       for (String key: farmMap.keySet()) {
+           System.out.println("farm infor: " + key + " : " + farmMap.get(key));
+       }
+     }
+     
+     if (farms != null) {
+       for (Farm farm: farms) {
+           System.out.println("farm is " + farm);
+       }
      }
 }
   
 
   
   @Override
-  public void readMultipleFile(File[] files) {
-	for(int i = 0; i < files.length; i++) {
-		readSingleFile(files[i]);
-	}	
+  public void readMultipleFile(String[] filenames) {
+    
   }
 
   @Override
@@ -646,7 +688,7 @@ public class Main  extends Application implements Stat {
     // TODO Auto-generated method stub
     Report farmReport = new Report("FarmId Report");
     for(int i = 0; i < farms.size(); i++) {
-    	if(farms.get(i).getFarmID().contentEquals(id)) {
+       	if(farms.get(i).getFarmID().contentEquals(id)) {
 				farmReport.farmReport(farms.get(i));
 			}
     }

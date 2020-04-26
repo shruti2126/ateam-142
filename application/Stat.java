@@ -5,8 +5,8 @@ import java.util.Date;
 // this is the interface for the main class
 
 public interface Stat {
-  void readSingleFile(File file);
-  void readMultipleFile(File[] files);
+  void readSingleFile(String filename);
+  void readMultipleFile(String[] filenames);
   Report showByFarmID(String id);
   Report showByMonth(int momth);
   Report showByFullYear();

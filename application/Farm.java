@@ -1,10 +1,10 @@
 package application;
-import java.util.Set;
+import java.util.TreeSet;
 public class Farm {
   private String farmID;
-  private Set<Milk> farmProduct;
+  private TreeSet<Milk> farmProduct;
 
-  public Farm(String farmID, Set<Milk> farmProduct) {
+  public Farm(String farmID, TreeSet<Milk> farmProduct) {
     super();
     this.farmID = farmID;
     this.farmProduct = farmProduct;
@@ -58,13 +58,13 @@ public class Farm {
   /**
    * @return the farmProduct
    */
-  public Set<Milk> getFarmProduct() {
+  public TreeSet<Milk> getFarmProduct() {
     return farmProduct;
   }
   /**
    * @param farmProduct the farmProduct to set
    */
-  public void setFarmProduct(Set<Milk> farmProduct) {
+  public void setFarmProduct(TreeSet<Milk> farmProduct) {
     this.farmProduct = farmProduct;
   }
 
