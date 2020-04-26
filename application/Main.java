@@ -664,13 +664,13 @@ public class Main  extends Application implements Stat {
      
      if (farmMap != null) {
        for (String key: farmMap.keySet()) {
-           System.out.println("farm infor: " + key + " : " + farmMap.get(key));
+           System.out.println("farm infor: " + key + " : " + farmMap.get(key).getFarmID());
        }
      }
      
      if (farms != null) {
        for (Farm farm: farms) {
-           System.out.println("farm is " + farm);
+           System.out.println("farm is " + farm.getFarmID() + " " + farm.getFarmProduct());
        }
      }
 }
