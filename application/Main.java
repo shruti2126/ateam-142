@@ -592,7 +592,6 @@ public class Main  extends Application implements Stat {
            Milk createMilk= new Milk (createDate,createFarmId,createWeight);
            storage.add (createMilk);
            
-           
            // to generate farmMap and push data into farmMap
            if (!farmMap.containsKey(createFarmId)) {
                Farm createFarm = new Farm (createFarmId, new TreeSet<>());
@@ -635,7 +634,7 @@ public class Main  extends Application implements Stat {
            else {
              List<Milk> existinMonthMilkList = monthMap.get(monthInt);
              existinMonthMilkList.add (createMilk);
-             monthMap.put (monthInt,existinMonthMilkList); 
+//             monthMap.put (monthInt,existinMonthMilkList); 
            }
            
            
@@ -677,10 +676,100 @@ public class Main  extends Application implements Stat {
 }
   
 
-  
   @Override
   public void readMultipleFile(String[] filenames) {
-    
+     // to store all milk in storage
+     storage = new ArrayList<>();
+     
+     monthMap = new TreeMap<>();
+     farmMap = new TreeMap<>();
+	 
+     farms = new ArrayList<>();
+	 farmProducts = new Hashtable<>();
+		 
+	for(int i = 0; i < filenames.length; i++) {	 
+		// start reading file
+	     BufferedReader br = null;
+	     String line = "";
+	     String cvsSplitBy = ",";
+	     
+	     try {
+	       br = new BufferedReader(new FileReader(filenames[i]));
+	       br.readLine();
+	       while ((line = br.readLine()) != null) {
+	           String[] milkStrings = line.split(cvsSplitBy);
+	           SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+	           
+	           Date createDate = format.parse(milkStrings[0]);
+	           String createFarmId = milkStrings[1];
+	           Integer createWeight = Integer.parseInt(milkStrings[2]);
+	           
+	           // generate milk instance and put into storage
+	           Milk createMilk= new Milk (createDate,createFarmId,createWeight);
+	           storage.add (createMilk);
+	           
+	           // to generate farmMap and push data into farmMap
+	           if (!farmMap.containsKey(createFarmId)) {
+	               Farm createFarm = new Farm (createFarmId, new TreeSet<>());
+	               TreeSet<Milk> currentSet = createFarm.getFarmProduct();
+	               currentSet.add(createMilk);
+	               createFarm.setFarmProduct(currentSet);
+	               
+	               // put the newly generated farm into map
+	               farmMap.put (createFarmId,createFarm);
+	               // add newly generated farm into farms list
+	               farms.add (createFarm);
+	           }
+	           // if this farm is already in farmMap
+	           else {
+	             Farm existingFarm = farmMap.get(createFarmId); 
+	             TreeSet<Milk> existingSet = existingFarm.getFarmProduct();
+	             existingSet.add(createMilk);
+	             existingFarm.setFarmProduct(existingSet);            
+	             
+	             // reset the existing farm in the farmMap
+	             farmMap.put (createFarmId,existingFarm);
+	             // reset the exiting farm in the farms list
+	             for (int i = 0; i < farms.size(); i++) {
+	                 if (farms.get(i).getFarmID().equals(existingFarm.getFarmID()) ){
+	                   farms.get(i).setFarmProduct(existingSet);;
+	                 }
+	             }                                      
+	           }
+	           
+	           // add milk to month map
+	           Integer monthInt = createDate.getMonth() + 1;
+	           
+	           // for the first time, put the month (1,2,3 ..) as key, and put a new list with milk to the map
+	           if (!monthMap.containsKey(monthInt)) {
+	             List<Milk> monthMilkList = new ArrayList<>();
+	             monthMilkList.add (createMilk);
+	             monthMap.put (monthInt,monthMilkList);             
+	           }
+	           // if the month map with the key (month), add milk to existing list and put back to map
+	           else {
+	             List<Milk> existinMonthMilkList = monthMap.get(monthInt);
+	             existinMonthMilkList.add (createMilk);
+//	             monthMap.put (monthInt,existinMonthMilkList); 
+	           }
+	           
+	           
+	           System.out.println(createMilk);
+	           System.out.println("-----------done with one instance---------------------------");
+	           
+
+	       }
+	       
+	       
+	     } catch (FileNotFoundException e) {
+	       e.printStackTrace();
+	     } catch (IOException e) {
+	       e.printStackTrace();
+	     } catch (ParseException e) {
+	       e.printStackTrace();
+	     }
+	}
+		 
   }
 
   @Override
