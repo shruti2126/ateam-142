@@ -4,12 +4,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -414,39 +414,48 @@ public class Main  extends Application implements Stat {
            }     
           });
          
-       // to generate report
-       if (annulCheck.isSelected()) {
-          report = showByFullYear();
-       }
-       else if (monthCheck.isSelected()) {
-         report = showByMonth(month);
-       }
-       
-       else if (dateCheck.isSelected()) {
-         report = showByDate(start,end);
-       }
-       else if (farmCheck.isSelected()) {
-         report = showByFarmID(id);
-       }
-       else {
-         System.out.println("no analyze method is selected");
-       }
-        
+
        b4.setOnAction (new EventHandler<ActionEvent>() {         
          @Override
          public void handle(ActionEvent event) {
            // put event triered by button1 here
            // show report in screen
-             System.out.println("-------------------------------");
-             System.out.println("report is " + report);
+
+             // to generate report
+             if (annulCheck.isSelected()) {
+                System.out.println("annul report to be generated");
+                report = showByFullYear();
+             }
+             else if (monthCheck.isSelected()) {
+               System.out.println("month report to be generated");
+               report = showByMonth(month);
+             }
+             
+             else if (dateCheck.isSelected()) {
+               System.out.println("date range report to be generated");
+               report = showByDate(start,end);
+             }
+             else if (farmCheck.isSelected()) {
+               System.out.println("farm report to be generated");
+               report = showByFarmID(id);
+             }
+             else {
+               System.out.println("no analyze method is selected");
+             }
+             
+             System.out.println("----ss---------------------------");
+             System.out.println("current report is " + report.getTitle());
+             System.out.println("----ss---------------------------");
+             
              
              if (report != null) {
                // save report as csv
-               Text text = new Text (report.getTitle());               
-               TextFlow textflow = new TextFlow();
+               Text text = new Text (report.getTitle());   
+               text.setFont(Font.font("Helvetica",30));
+               text.setFill (Paint.valueOf("blue")); 
                
-               Text reportText = new Text (report.toString());
-               textflow.getChildren().addAll(text,reportText);
+               TextFlow textflow = new TextFlow();
+               textflow.getChildren().addAll(text);
                textflow.setTextAlignment (TextAlignment.CENTER);
                
                
@@ -485,30 +494,66 @@ public class Main  extends Application implements Stat {
        }); 
        
        
-       
-       b5.setOnAction (new EventHandler<ActionEvent>() {
-         
+       b5.setOnAction (new EventHandler<ActionEvent>() {         
          @Override
          public void handle(ActionEvent event) {
            // put event triered by button1 here
            // show report in screen
-           
-             report = new Report ("report");
-             Milk m1 = new Milk (new Date(), "farm 1", 777);
-             TreeSet <Milk> s1 = new TreeSet<>();
-             s1.add(m1);
-             report.setContent(s1);
-             System.out.println(report);
+
+             // to generate report
+             if (annulCheck.isSelected()) {
+                System.out.println("annul report to be generated");
+                report = showByFullYear();
+             }
+             else if (monthCheck.isSelected()) {
+               System.out.println("month report to be generated");
+               report = showByMonth(month);
+             }
+             
+             else if (dateCheck.isSelected()) {
+               System.out.println("date range report to be generated");
+               report = showByDate(start,end);
+             }
+             else if (farmCheck.isSelected()) {
+               System.out.println("farm report to be generated");
+               report = showByFarmID(id);
+             }
+             else {
+               System.out.println("no analyze method is selected");
+             }
+             
+             System.out.println("----ss---------------------------");
+             System.out.println("current report is " + report.getTitle());
+             System.out.println("----ss---------------------------");
+            
+             FileChooser fileChooser = new FileChooser();
+             
+             //Set extension filter
+             FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("csv files (*.csv)", "*.csv");
+             fileChooser.getExtensionFilters().add(extFilter);
+             
+             //Show save file dialog
+             File file = fileChooser.showSaveDialog(primaryStage);
+             
              
              if (report != null) {
-                 System.out.println(report);
+               // write data from report to csv
+               System.out.println("report to be saved");
+               
+               try {
+                 PrintWriter writer;
+                 writer = new PrintWriter(file);
+                 writer.println(report.getTitle());
+                 writer.close();
+             } catch (IOException ex) {
+               }
              }
              
              else {
-               Text text = new Text ("Report is null, can't export report");
-               text.setFont(Font.font("Helvetica",30));
-               text.setFill (Paint.valueOf("blue"));
                
+               Text text = new Text ("Report is null ");
+               text.setFont(Font.font("Helvetica",30));
+               text.setFill (Paint.valueOf("blue"));               
                TextFlow textflow = new TextFlow();
                
                textflow.getChildren().addAll(text);
@@ -524,6 +569,7 @@ public class Main  extends Application implements Stat {
              }
          }        
        }); 
+       
        
        b6.setOnAction (new EventHandler<ActionEvent>() {
          
@@ -797,7 +843,7 @@ public class Main  extends Application implements Stat {
     // TODO Auto-generated method stub
     Report annulReport = new Report("Annul Report");
     annulReport.annualReport(storage);
-    
+    System.out.println("generate here annulReport" + annulReport.getTitle());
     return annulReport;
   }
   
