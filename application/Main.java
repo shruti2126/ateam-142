@@ -647,6 +647,7 @@ public class Main  extends Application implements Stat {
              createDate = format.parse(milkStrings[0]);
            }
            catch (Exception e) {
+             System.out.println("pass this invalid date record");
              continue;
           }
 
@@ -775,6 +776,7 @@ public class Main  extends Application implements Stat {
 	             createDate = format.parse(milkStrings[0]);
 	           }
 	           catch (Exception e) {
+	             System.out.println("pass this invalid date record");
 	             continue;
               }
 
