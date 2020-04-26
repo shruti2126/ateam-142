@@ -46,6 +46,7 @@ public class Main  extends Application implements Stat {
   
   private List <Milk> storage;
   
+  private TreeSet<Milk> reportTreeSet;
   
   private List <Farm> farms;  //list of farms
   
@@ -574,19 +575,25 @@ public class Main  extends Application implements Stat {
                   csvWriter.append("Milk Weight");
                   csvWriter.append("\n");
                   
-                  
+                  reportTreeSet = new TreeSet<>();
                   for (ArrayList<Milk> innerList: myReportList) {
-                      for (Milk currentMilk: innerList) {
-                        csvWriter.append(currentMilk.getFarmID());
-                        csvWriter.append(",");
-                        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
-                        csvWriter.append(formatter.format(currentMilk.getDate()));
-                        csvWriter.append(",");
-                        csvWriter.append(Integer.toString(currentMilk.getWeight()));
-                        csvWriter.append("\n");
-                      }
+                    for (Milk m: innerList) {
+                      reportTreeSet.add(m);
+                    }
                   }
-                  csvWriter.close();
+                  
+                  for (Milk currentMilk : reportTreeSet) {
+                    csvWriter.append(currentMilk.getFarmID());
+                    csvWriter.append(",");
+                    SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+                    csvWriter.append(formatter.format(currentMilk.getDate()));
+                    csvWriter.append(",");
+                    csvWriter.append(Integer.toString(currentMilk.getWeight()));
+                    csvWriter.append("\n");
+                  }
+
+
+                 csvWriter.close();
                   
               } catch (IOException ex) {
                 }
