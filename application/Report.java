@@ -22,10 +22,27 @@ import javafx.scene.text.Text;
 
 public class Report {
 
-	private PieChart pieChart;
+
+  public ArrayList<ArrayList<Milk>> getMonthReport() {
+    return monthReport;
+  }
+
+  public ArrayList<ArrayList<Milk>> getAnnual() {
+    return annual;
+  }
+
+  public ArrayList<ArrayList<Milk>> getRangeReport() {
+    return rangeReport;
+  }
+  
+  public ArrayList<ArrayList<Milk>> getReportList() {
+    return reportList;
+  }
+
+
+  private PieChart pieChart;
 	private String title;
-	private TreeSet<Milk> content;
-	private List<List<Milk>> reportList = new ArrayList<List<Milk>>();
+	private ArrayList<ArrayList<Milk>> reportList = new ArrayList<ArrayList<Milk>>();
 	private ArrayList<ArrayList<Milk>> monthReport = new ArrayList<ArrayList<Milk>>();
 	private int[] monthWeights;
 	private ArrayList<ArrayList<Milk>> annual = new ArrayList<ArrayList<Milk>>();
@@ -43,12 +60,6 @@ public class Report {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Report for ");
 		sb.append(this.title);
-		sb.append("\n");
-		for (Milk m : content) {
-			sb.append(m);
-			sb.append("\n");
-		}
-
 		return sb.toString();
 	}
 
@@ -237,18 +248,19 @@ public class Report {
 	@SuppressWarnings("deprecation")
 	public void farmReport(Farm farm) {
 
-		List<Milk> jan = new ArrayList<Milk>();
-		List<Milk> feb = new ArrayList<Milk>();
-		List<Milk> mar = new ArrayList<Milk>();
-		List<Milk> apr = new ArrayList<Milk>();
-		List<Milk> may = new ArrayList<Milk>();
-		List<Milk> jun = new ArrayList<Milk>();
-		List<Milk> jul = new ArrayList<Milk>();
-		List<Milk> aug = new ArrayList<Milk>();
-		List<Milk> sep = new ArrayList<Milk>();
-		List<Milk> oct = new ArrayList<Milk>();
-		List<Milk> nov = new ArrayList<Milk>();
-		List<Milk> dec = new ArrayList<Milk>();
+		ArrayList<Milk> jan = new ArrayList<Milk>();
+		ArrayList<Milk> feb = new ArrayList<Milk>();
+		ArrayList<Milk> mar = new ArrayList<Milk>();
+		ArrayList<Milk> apr = new ArrayList<Milk>();
+		ArrayList<Milk> may = new ArrayList<Milk>();
+		ArrayList<Milk> jun = new ArrayList<Milk>();
+		ArrayList<Milk> jul = new ArrayList<Milk>();
+		ArrayList<Milk> aug = new ArrayList<Milk>();
+		ArrayList<Milk> sep = new ArrayList<Milk>();
+		ArrayList<Milk> oct = new ArrayList<Milk>();
+		ArrayList<Milk> nov = new ArrayList<Milk>();
+		ArrayList<Milk> dec = new ArrayList<Milk>();
+		
 		Set<Milk> set = farm.getFarmProduct();
 		for (Milk milk : set) {
 			switch (milk.getDate().getMonth()) {
@@ -321,16 +333,7 @@ public class Report {
 		this.title = title;
 	}
 
-	/**
-	 * @return the content
-	 */
 
-	/**
-	 * @param content the content to set
-	 */
-	public void setContent(TreeSet<Milk> content) {
-		this.content = content;
-	}
 
 //  public static void main(String[] args) {
 //    Report report = new Report ("123");

@@ -3,9 +3,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 //import com.fasterxml.jackson.core.JsonProcessingException;
@@ -33,7 +32,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
@@ -523,6 +521,7 @@ public class Main  extends Application implements Stat {
              else {
                System.out.println("no analyze method is selected");
              }
+           
              
              System.out.println("----ss---------------------------");
              System.out.println("current report is " + report.getTitle());
@@ -536,19 +535,63 @@ public class Main  extends Application implements Stat {
              
              //Show save file dialog
              File file = fileChooser.showSaveDialog(primaryStage);
+             ArrayList<ArrayList<Milk>> myReportList= null;
              
              
              if (report != null) {
                // write data from report to csv
-               System.out.println("report to be saved");
+               System.out.println("report will be saved");
                
-               try {
-                 PrintWriter writer;
-                 writer = new PrintWriter(file);
-                 writer.println(report.getTitle());
-                 writer.close();
-             } catch (IOException ex) {
-               }
+               if (annulCheck.isSelected()) {
+                 myReportList = report.getAnnual();
+              }
+              else if (monthCheck.isSelected()) {
+                myReportList = report.getMonthReport();
+              }
+              
+              else if (dateCheck.isSelected()) {
+                myReportList = report.getRangeReport();
+              }
+              else if (farmCheck.isSelected()) {
+                myReportList = report.getReportList();
+              }
+              else {
+                myReportList = null;
+              }
+               
+              if (myReportList != null) {
+                try {
+                  FileWriter csvWriter;
+                  csvWriter = new FileWriter(file);
+                  
+                  csvWriter.append(report.getTitle());
+                  csvWriter.append("\n");
+                  
+                  csvWriter.append("FarmID");
+                  csvWriter.append(",");
+                  csvWriter.append("Production Date");
+                  csvWriter.append(",");
+                  csvWriter.append("Milk Weight");
+                  csvWriter.append("\n");
+                  
+                  
+                  for (ArrayList<Milk> innerList: myReportList) {
+                      for (Milk currentMilk: innerList) {
+                        csvWriter.append(currentMilk.getFarmID());
+                        csvWriter.append(",");
+                        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+                        csvWriter.append(formatter.format(currentMilk.getDate()));
+                        csvWriter.append(",");
+                        csvWriter.append(Integer.toString(currentMilk.getWeight()));
+                        csvWriter.append("\n");
+                      }
+                  }
+                  csvWriter.close();
+                  
+              } catch (IOException ex) {
+                }
+              }
+
              }
              
              else {
@@ -733,7 +776,6 @@ public class Main  extends Application implements Stat {
        }
      }
 }
-  
 
  @Override
  public void readMultipleFile(String[] filenames) {
@@ -884,8 +926,7 @@ public class Main  extends Application implements Stat {
     // TODO Auto-generated method stub
     Report monthReport = new Report("Month Report");
     monthReport.monthReport(storage, month);
-
-    
+ 
     return monthReport;
   }
 
