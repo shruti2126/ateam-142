@@ -43,19 +43,6 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
 public class Main  extends Application implements Stat {
-  /**
-   * @return the report
-   */
-  public Report getReport() {
-    return report;
-  }
-
-  /**
-   * @param report the report to set
-   */
-  public void setReport(Report report) {
-    this.report = report;
-  }
   
   private List <Milk> storage;
   
@@ -71,7 +58,7 @@ public class Main  extends Application implements Stat {
   
   
   // do we need this ?  
-  private Hashtable <String, Set<Milk>> farmProducts; //to store milk specified by farmId
+//  private Hashtable <String, Set<Milk>> farmProducts; //to store milk specified by farmId
   
 
   // report to export
@@ -450,14 +437,13 @@ public class Main  extends Application implements Stat {
          public void handle(ActionEvent event) {
            // put event triered by button1 here
            // show report in screen
-
+             System.out.println("-------------------------------");
+             System.out.println("report is " + report);
+             
              if (report != null) {
                // save report as csv
-               Text text = new Text (report.getTitle());
-               
+               Text text = new Text (report.getTitle());               
                TextFlow textflow = new TextFlow();
-
-
                
                Text reportText = new Text (report.toString());
                textflow.getChildren().addAll(text,reportText);
@@ -478,7 +464,7 @@ public class Main  extends Application implements Stat {
              }
              
              else {
-            	 
+               
                Text text = new Text ("Report is null ");
                text.setFont(Font.font("Helvetica",30));
                text.setFill (Paint.valueOf("blue"));               
@@ -507,26 +493,15 @@ public class Main  extends Application implements Stat {
            // put event triered by button1 here
            // show report in screen
            
-//             report = new Report ("report");
+             report = new Report ("report");
+             Milk m1 = new Milk (new Date(), "farm 1", 777);
+             TreeSet <Milk> s1 = new TreeSet<>();
+             s1.add(m1);
+             report.setContent(s1);
+             System.out.println(report);
              
              if (report != null) {
-               //ObjectMapper mapper = new ObjectMapper();
-               
-               String json;
-               
-//             Milk m1 = new Milk (new Date(), "1", 25);
-//             Milk m2 = new Milk (new Date(), "2", 45);
-//             report.addMilk(m1);
-//             report.addMilk(m2);
-               
-              try {
-               // json = mapper.writeValueAsString(report);               
-               // mapper.writeValue (new File ("d://report.txt"), report);
-              } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-              }
-
+                 System.out.println(report);
              }
              
              else {
@@ -592,7 +567,6 @@ public class Main  extends Application implements Stat {
      farmMap = new TreeMap<>();
 	 
      farms = new ArrayList<>();
-	 farmProducts = new Hashtable<>();
 	 
 	 
 	 // start reading file
@@ -708,9 +682,8 @@ public class Main  extends Application implements Stat {
      farmMap = new TreeMap<>();
 	 
      farms = new ArrayList<>();
-	 farmProducts = new Hashtable<>();
 		 
-	for(int i = 0; i < filenames.length; i++) {	 
+	 for(int i = 0; i < filenames.length; i++) {	 
 		// start reading file
 	     BufferedReader br = null;
 	     String line = "";
