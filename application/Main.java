@@ -89,7 +89,7 @@ public class Main  extends Application implements Stat {
     Button b1=  new Button("Load Single File");   
     Button b2 = new Button("Load Multi Files");      
     Button b4 = new Button("Show Report");   
-    Button b5 = new Button("Save CSV Report");      
+    Button b5 = new Button("Save Report");      
     Button b6 = new Button("Clear Data");
     
     b1.setLayoutX(100);
