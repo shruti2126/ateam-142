@@ -5,12 +5,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -524,8 +524,8 @@ public class Main  extends Application implements Stat {
                else if (farmCheck.isSelected()) {
                  System.out.println("farm report to be generated");
                  report = showByFarmID(id);
-               }
-
+               }               
+               
                FileChooser fileChooser = new FileChooser();             
                //Set extension filter
                FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("csv files (*.csv)", "*.csv");
@@ -534,54 +534,153 @@ public class Main  extends Application implements Stat {
                //Show save file dialog
                File file = fileChooser.showSaveDialog(primaryStage);
                ArrayList<ArrayList<Milk>> myReportList= null;             
+               TreeSet <Milk> storedReportSet = new TreeSet<>();
                
                if (report != null) {
                  // write data from report to csv             
-                if (annulCheck.isSelected()) {
-                   myReportList = report.getAnnual();
-                   }
-                if (monthCheck.isSelected()) {
-                  myReportList = report.getMonthReport();
-                  }              
-                if (dateCheck.isSelected()) {
-                  myReportList = report.getRangeReport();
-                  }
-                if (farmCheck.isSelected()) {
+                if (annulCheck.isSelected() || monthCheck.isSelected()) {
+                   if (annulCheck.isSelected()) {myReportList = report.getAnnual();}
+                   else {myReportList = report.getMonthReport();}                     
+                   
+                   int totalWeight = 0;
+                   for (ArrayList<Milk> farmList: myReportList) {
+                       int weight = 0;
+                       String farmName = null;
+                       for (Milk currentMilk : farmList) {
+                         farmName = currentMilk.getFarmID();
+                         weight += currentMilk.getWeight();
+                       }
+                       if (farmName != null) {
+                         Milk sumMilk = new Milk (new Date(),farmName, weight);
+                         totalWeight += weight;
+                         storedReportSet.add(sumMilk);
+                       }
+                   }                   
+                   try {
+                     FileWriter csvWriter;
+                     csvWriter = new FileWriter(file);                  
+                     csvWriter.append(report.getTitle());
+                     csvWriter.append("\n");                  
+                     csvWriter.append("FarmID");
+                     csvWriter.append(",");
+                     csvWriter.append("Total Milk Weight");
+                     csvWriter.append(",");
+                     csvWriter.append("Percent");
+                     csvWriter.append("\n");                  
+                     for (Milk currentMilk : storedReportSet) {
+                         csvWriter.append(currentMilk.getFarmID());
+                         csvWriter.append(",");
+                         csvWriter.append(Integer.toString(currentMilk.getWeight()));
+                         csvWriter.append(",");
+                         float percent = (currentMilk.getWeight() * 100.0f) / totalWeight;
+                         csvWriter.append(String.valueOf(percent));
+                         csvWriter.append("\n");
+                         }
+                      csvWriter.close();
+                     }              
+                catch (Exception ex) { }
+                }
+                
+                else if (farmCheck.isSelected()) {
                   myReportList = report.getReportList();
-                  }
-                 
-                if (myReportList != null) {
-                  
-                  // this line may need to change to save data
+                  int totalWeight = 0;
+                  String farmName = null;
+                  for (ArrayList<Milk> farmList: myReportList) {
+                      int weight = 0;
+                      farmName = null;
+                      Date produceDate = null;
+                      for (Milk currentMilk : farmList) {                        
+                        farmName = currentMilk.getFarmID();
+                        weight += currentMilk.getWeight();
+                        produceDate = currentMilk.getDate();
+                      }
+                      
+                      if (farmName != null) {
+                        Milk sumMilk = new Milk (produceDate,farmName, weight);
+                        totalWeight += weight;
+                        storedReportSet.add(sumMilk);
+                      }
+                    }
                   try {
                     FileWriter csvWriter;
                     csvWriter = new FileWriter(file);                  
                     csvWriter.append(report.getTitle());
-                    csvWriter.append("\n");                  
-                    csvWriter.append("FarmID");
-                    csvWriter.append(",");
-                    csvWriter.append("Production Date");
-                    csvWriter.append(",");
-                    csvWriter.append("Milk Weight");
-                    csvWriter.append("\n");                  
-                    reportTreeSet = new TreeSet<>();
-                    for (ArrayList<Milk> innerList: myReportList) {
-                      for (Milk m: innerList) {reportTreeSet.add(m);}
+                    csvWriter.append("\n");   
+                    if (farmName != null) {
+                      csvWriter.append(farmName);
+                      csvWriter.append("\n"); 
                     }
                     
-                    for (Milk currentMilk : reportTreeSet) {
-                      csvWriter.append(currentMilk.getFarmID());
-                      csvWriter.append(",");
-                      SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
-                      csvWriter.append(formatter.format(currentMilk.getDate()));
-                      csvWriter.append(",");
-                      csvWriter.append(Integer.toString(currentMilk.getWeight()));
-                      csvWriter.append("\n");
-                    }
-                   csvWriter.close();}               
+                    csvWriter.append("Month");
+                    csvWriter.append(",");
+                    csvWriter.append("Total Milk Weight");
+                    csvWriter.append(",");
+                    csvWriter.append("Percent");
+                    csvWriter.append("\n");                  
+                    for (Milk currentMilk : storedReportSet) {
+                        csvWriter.append(String.valueOf (currentMilk.getDate().getMonth()+1));
+                        csvWriter.append(",");
+                        csvWriter.append(Integer.toString(currentMilk.getWeight()));
+                        csvWriter.append(",");
+                        float percent = (currentMilk.getWeight() * 100.0f) / totalWeight;
+                        csvWriter.append(String.valueOf(percent));
+                        csvWriter.append("\n");
+                        }
+                     csvWriter.close();
+                    }              
                catch (Exception ex) { }
-                }
+                  }                  
                 
+               else if (dateCheck.isSelected()) {
+                  myReportList = report.getRangeReport();
+                  HashSet<String> farmNames = new HashSet<>();
+                  int totalWeight = 0;                  
+                  for (ArrayList<Milk> farmList: myReportList) {
+                      for (Milk currentMilk : farmList) {                        
+                        String farmName = currentMilk.getFarmID();
+                        totalWeight += currentMilk.getWeight();
+                        farmNames.add(farmName);
+                      }
+                    }
+                  
+                  for (String farmName : farmNames) {
+                    Milk generatedMilk = new Milk (new Date(), farmName, 0);
+                    for (ArrayList<Milk> farmList: myReportList) {
+                      for (Milk currentMilk : farmList) {
+                          if (currentMilk.getFarmID().equals(farmName)) {
+                              int preWeight = generatedMilk.getWeight();
+                              int currentWeight = preWeight + currentMilk.getWeight();
+                              generatedMilk.setWeight(currentWeight);
+                          }
+                        }
+                      }
+                    storedReportSet.add (generatedMilk);
+                  }
+                  try {
+                    FileWriter csvWriter;
+                    csvWriter = new FileWriter(file);                  
+                    csvWriter.append(report.getTitle());
+                    csvWriter.append("\n");                     
+                    csvWriter.append("FarmID");
+                    csvWriter.append(",");
+                    csvWriter.append("Total Milk Weight");
+                    csvWriter.append(",");
+                    csvWriter.append("Percent");
+                    csvWriter.append("\n");                  
+                    for (Milk currentMilk : storedReportSet) {
+                        csvWriter.append(String.valueOf (currentMilk.getFarmID()));
+                        csvWriter.append(",");
+                        csvWriter.append(Integer.toString(currentMilk.getWeight()));
+                        csvWriter.append(",");
+                        float percent = (currentMilk.getWeight() * 100.0f) / totalWeight;
+                        csvWriter.append(String.valueOf(percent));
+                        csvWriter.append("\n");
+                        }
+                     csvWriter.close();
+                    }              
+               catch (Exception ex) { }
+                  }              
+               
                }
              }
           }           
