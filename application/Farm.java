@@ -1,9 +1,17 @@
 package application;
 import java.util.TreeSet;
+/**
+ * @author Zhonggang (John) Li
+ * this is the farm class to store Milk related to certain farmID 
+ */
 public class Farm {
   private String farmID;
   private TreeSet<Milk> farmProduct;
 
+  /**
+   * @param farmID
+   * @param farmProduct
+   */
   public Farm(String farmID, TreeSet<Milk> farmProduct) {
     super();
     this.farmID = farmID;

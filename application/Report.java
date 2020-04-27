@@ -20,21 +20,39 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 
+/**
+ * @author Samuel Bahr
+ * Used to generate report
+ */
 public class Report {
 
 
+  /**
+   * @return the monthly report and can be called
+   */
   public ArrayList<ArrayList<Milk>> getMonthReport() {
     return monthReport;
   }
 
+  /**
+   * @return the annual report and can be called
+   */
   public ArrayList<ArrayList<Milk>> getAnnual() {
     return annual;
   }
+  
+  /**
+   * @return the date-range report and can be called
+   */
 
   public ArrayList<ArrayList<Milk>> getRangeReport() {
     return rangeReport;
   }
   
+  /**
+   * @return the farm-specific report and can be called
+   */
+
   public ArrayList<ArrayList<Milk>> getReportList() {
     return reportList;
   }

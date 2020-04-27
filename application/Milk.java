@@ -1,22 +1,42 @@
 package application;
 import java.util.Date;
 
+/**
+ * @author Zhonggang (John) Li
+ * this class is the Milk, used to store the milk information for each record 
+ *
+ */
 public class Milk implements Comparable<Milk> {
+  /**
+   *Since milk implements comparable, it should be compared.
+   *In this case, Milk can be stored in TreeSet and comes with the heaviest one
+   */
+  @Override
+  public int compareTo(Milk o) {
+    return o.weight -this.weight;
+  }
   
-  
-
+  /**
+   * To string method, can be used to printout for user view
+   */
   @Override
   public String toString() {
-    return "Milk [date=" + date + ", farmID=" + farmID + ", weight=" + weight + "]";
+    return "Milk [date=: " + date + ", farmID: " + farmID + ", weight: " + weight + "]";
   }
 
 
-  private Date date;
-  private String farmID;
-  private int weight;
+  private Date date; // produced date
+  private String farmID; // farmID, 
+  private int weight; // the milk weight
   
   
   
+  /**
+   * Construction method to generate milk instance
+   * @param date
+   * @param farmID
+   * @param weight
+   */
   public Milk(Date date, String farmID, int weight) {
     super();
     this.date = date;
@@ -104,10 +124,5 @@ public class Milk implements Comparable<Milk> {
   }
 
 
-
-  @Override
-  public int compareTo(Milk o) {
-    return o.weight -this.weight;
-  }
   
 }

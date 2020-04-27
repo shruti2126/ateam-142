@@ -42,113 +42,96 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
-public class Main  extends Application implements Stat {
-  
-  private List <Milk> storage;
-  
-  private TreeSet<Milk> reportTreeSet;
-  
-  private List <Farm> farms;  //list of farms
-  
-  
- // private List<Farm> farmObj; //list of farmObj
-  private Map<Integer,List<Milk>> monthMap;
-  
-  // farmMap, with name as string, and Farm as its value
-  private Map<String, Farm> farmMap;
-  
-  
-  // do we need this ?  
-//  private Hashtable <String, Set<Milk>> farmProducts; //to store milk specified by farmId
-  
-
-  // report to export
-  private Report report;
-
+/**
+ * @author Zhonggang (John) Li,  Shruti Sharma, Samuel Bahr
+ *
+ *this is the main method to show UI and do the milk statistical analysis
+ */
+/**
+ * @author Administrator
+ *
+ */
+/**
+ * @author Administrator
+ *
+ */
+public class Main  extends Application implements Stat {  
+  private List <Milk> storage; // list of all milk records in the csv files  
+  private TreeSet<Milk> reportTreeSet; // this is the milk stored in the treeSet for report purpose  
+  private List <Farm> farms;  //list of farms   
+  private Map<Integer,List<Milk>> monthMap;//list of farmObj    
+  private Map<String, Farm> farmMap; // farmMap, with name as string, and Farm as its value  
+  private Report report; // report to display and export  
+  File singleFile; // single file to be loaded
+  List<File> selectedFiles; // multiple files to be loaded
+  // set up as global variable to get input from the selection in javafx
   private int month;
   private String id;
   private Date start;
   private Date end;
   String monthString;
-  
-  
-  // files to be loaded
-  File singleFile;
-  List<File> selectedFiles;
-  
 
-  
-  public static void main(String[] args) {
-
+ public static void main(String[] args) {
     launch(args);
-
   }
 
-  @Override
-  public void start(Stage primaryStage) throws Exception {
+ @Override
+ public void start(Stage primaryStage) throws Exception {
  
-    Button b1=  new Button("Load Single File");   
-    Button b2 = new Button("Load Multi Files");      
-    Button b4 = new Button("Show Report");   
-    Button b5 = new Button("Save Report");      
-    Button b6 = new Button("Clear Data");
+    Button b1=  new Button("Load Single File");  // b1 is loading single file 
+    Button b2 = new Button("Load Multi Files");  //b2 is loading multiple files    
+    Button b4 = new Button("Show Report");   // b4 is show report in screen
+    Button b5 = new Button("Save Report");   // b5 is to save report as csv   
+    Button b6 = new Button("Clear Data");   // b6 is used to clear data and re-do the analysis
     
+    // set up style for all buttons
     b1.setLayoutX(100);
     b1.setLayoutY(100);
     b1.setPrefWidth(100);
-    b1.setPrefHeight(50);
-    
+    b1.setPrefHeight(50);    
     b2.setLayoutX(400);
     b2.setLayoutY(100);
     b2.setPrefWidth(100);
     b2.setPrefHeight(50);
-    
     b4.setLayoutX(50);
     b4.setLayoutY(500);
     b4.setPrefWidth(100);
-    b4.setPrefHeight(50);
-    
+    b4.setPrefHeight(50);    
     b5.setLayoutX(250);
     b5.setLayoutY(500);
     b5.setPrefWidth(100);
-    b5.setPrefHeight(50);
-    
+    b5.setPrefHeight(50);    
     b6.setLayoutX(450);
     b6.setLayoutY(500);
     b6.setPrefWidth(100);
     b6.setPrefHeight(50);
-    
-    // use css
     b1.setStyle("-fx-background-color:greenyellow;"+
                 "-fx-background-radium:20;"
-        );
-    
+        );    
     b2.setStyle("-fx-background-color:greenyellow;"+
         "-fx-background-radium:20;"
         );
-
     b4.setStyle("-fx-text-fill:red;"+
         "-fx-background-color:lightblue;"+
         "-fx-background-radium:25;"
-        );
-    
+        );    
     b5.setStyle("-fx-text-fill:red;"+
         "-fx-background-color:lightblue;"+
         "-fx-background-radium:25;"
         );
     
     
-    
-      b1.setOnAction (new EventHandler<ActionEvent>() {
-        
+     
+     b1.setOnAction (new EventHandler<ActionEvent>() {
+        // set up b1 action
         @Override
         public void handle(ActionEvent event) {
-          // put event triered by button1 here
+          // use filechooser to select files to be loaded
           FileChooser fc1 = new FileChooser();
           fc1.setTitle("Load Single File");        
           singleFile = fc1.showOpenDialog(primaryStage);
+          // changing button style after loading file
           if (singleFile !=null) {
-
             b1.setText("file uploaded");
             b1.setStyle("-fx-background-color:yellow;"+
                 "-fx-background-radium:30;"
@@ -158,41 +141,32 @@ public class Main  extends Application implements Stat {
         }        
       });
       
-      b2.setOnAction (new EventHandler<ActionEvent>() {
-  
+     
+    b2.setOnAction (new EventHandler<ActionEvent>() { // similar to b1
         @Override
-        public void handle(ActionEvent event) {
-          // put event triered by button1 here
-          
+        public void handle(ActionEvent event) {         
           FileChooser fileChooser = new FileChooser();
           fileChooser.setTitle("Load Multiple Files");
           fileChooser.getExtensionFilters().addAll(new ExtensionFilter("csv Files", "*.csv"));
-          selectedFiles = fileChooser.showOpenMultipleDialog(primaryStage);
-          
-          if (selectedFiles != null || selectedFiles.size() != 0) {
-              
-//            System.out.println(selectedFiles);
+          selectedFiles = fileChooser.showOpenMultipleDialog(primaryStage);          
+          if (selectedFiles != null || selectedFiles.size() != 0) {              
             String[] filenames = new String[selectedFiles.size()]; 
             for (int i = 0; i < selectedFiles.size();i++) {
                 filenames[i] = selectedFiles.get(i).toString();
             }
-            
-            readMultipleFile(filenames);
-            
+            readMultipleFile(filenames);            
             b2.setText("files uploaded");
             b2.setStyle("-fx-background-color:yellow;"+
                 "-fx-background-radium:30;");
-          }
-
-         
+          }        
         }        
       });
-         //text field
+    
+         //now set up all text fields
          Label labelTitle = new Label("Milk Weights Analyzer");
          labelTitle.setLayoutX (150);
          labelTitle.setLayoutY (10);
-         labelTitle.setFont (new Font("Arial", 30));
-         
+         labelTitle.setFont (new Font("Arial", 30));         
          
          Label labelPartOne = new Label("I : Upload File");
          labelPartOne.setTextFill(Color.web("#0076a3"));        
@@ -229,48 +203,36 @@ public class Main  extends Application implements Stat {
          labelFarmID.setLayoutY (365);
          labelFarmID.setFont (new Font("Arial", 20));
          
+         // this is the farmID analysis panel
          CheckBox farmCheck = new CheckBox ("4. Farm Analyze");
          farmCheck.setLayoutX (100);
          farmCheck.setLayoutY (370);   
          farmCheck.setStyle(
-             "-fx-font-size: 20;"
-        );
-         
-         TextField textFarmID = new TextField();        
-         
+             "-fx-font-size: 20;" );         
+         TextField textFarmID = new TextField();          
          textFarmID.setLayoutX (150);
-         textFarmID.setLayoutY (400);
-         
-         id = textFarmID.getText();
-         
-         
+         textFarmID.setLayoutY (400);         
+         id = textFarmID.getText();    
          Tooltip tip = new Tooltip ("This is the farmID");
          tip.setFont (Font.font(25));      
-         textFarmID.setTooltip (tip);
-         
+         textFarmID.setTooltip (tip);         
          textFarmID.setPromptText("Input farmID here: ");
-         textFarmID.setFocusTraversable (false);
-         
+         textFarmID.setFocusTraversable (false);         
          ZoneId defaultZoneId = ZoneId.systemDefault();
-
-         DatePicker startPicker = new DatePicker();
-         
+         DatePicker startPicker = new DatePicker();         
          DatePicker endPicker = new DatePicker();
-         
         
+         // this is the date range analysis panel
          Label labelRange = new Label("3. Date-range Analyze: ");
          labelRange.setLayoutX (100);
          labelRange.setLayoutY (285);
-         labelRange.setFont (new Font("Arial", 20));
-         
+         labelRange.setFont (new Font("Arial", 20));      
          CheckBox dateCheck = new CheckBox ("3. Date Range Analyze");
          dateCheck.setLayoutX (100);
-         dateCheck.setLayoutY (290); 
-         
+         dateCheck.setLayoutY (290);          
          dateCheck.setStyle(
               "-fx-font-size: 20;"
-         );
-         
+         );        
          
          GridPane gpDate = new GridPane();
          gpDate.add(startPicker,0,0);
@@ -280,11 +242,11 @@ public class Main  extends Application implements Stat {
          gpDate.setLayoutX (150);
          gpDate.setLayoutY (330);
          
+         // this is the date month analysis panel
          Label labelMonth = new Label("2. Month Analyze: ");
          labelMonth.setLayoutX (300);
          labelMonth.setLayoutY (210);
-         labelMonth.setFont (new Font("Arial", 20));
-         
+         labelMonth.setFont (new Font("Arial", 20));         
          ComboBox <String> comboBoxMonth = new ComboBox<> ();
          comboBoxMonth.getItems().add("Janunary");
          comboBoxMonth.getItems().add("Febrary");
@@ -297,18 +259,13 @@ public class Main  extends Application implements Stat {
          comboBoxMonth.getItems().add("September");
          comboBoxMonth.getItems().add("Octember");
          comboBoxMonth.getItems().add("November");
-         comboBoxMonth.getItems().add("December");
-         
+         comboBoxMonth.getItems().add("December");         
          comboBoxMonth.setLayoutX (300);
-         comboBoxMonth.setLayoutY (240);
-         
-
-         
+         comboBoxMonth.setLayoutY (240);         
          CheckBox monthCheck = new CheckBox ("Month Analyze");
          monthCheck.setLayoutX (420);
          monthCheck.setLayoutY (245); 
-   
-         
+            
          // if selected all, trigger event to uncheck the others:
          annulCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
           @Override
@@ -322,7 +279,6 @@ public class Main  extends Application implements Stat {
           }                 
          });
          
-
          // if selected month, trigger event to uncheck the others:
          monthCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
           @Override
@@ -411,219 +367,226 @@ public class Main  extends Application implements Stat {
                }
            }     
           });
-       
-         
 
        b4.setOnAction (new EventHandler<ActionEvent>() {         
          @Override
          public void handle(ActionEvent event) {
            // put event triered by button1 here
            // show report in screen
-
-             // to generate report
-             if (annulCheck.isSelected()) {
-                System.out.println("annul report to be generated");
-                report = showByFullYear();
-             }
-             else if (monthCheck.isSelected()) {
-               System.out.println("month report to be generated");
-               report = showByMonth(month);
-             }
+           if (singleFile == null && selectedFiles == null) {
+             Text warning = new Text ("No datafile Selected");   
+             warning.setFont(Font.font("Helvetica",40));
+             warning.setFill (Paint.valueOf("Red")); 
+             TextFlow warningtextflow = new TextFlow();
+             warningtextflow.getChildren().addAll(warning);
+             warningtextflow.setTextAlignment (TextAlignment.CENTER);               
+             // put report in sceneOut
+             Group groupOutwarning = new Group();
+             groupOutwarning.getChildren().add(warningtextflow);
+             Scene sceneOutwarning = new Scene(groupOutwarning); 
+             Stage stagewarning = new Stage();             
+             stagewarning.setScene(sceneOutwarning);
+             stagewarning.setTitle("warning");
+             stagewarning.setHeight(600);
+             stagewarning.setWidth(600);
+             stagewarning.show();
+           }
+           
+           else {
              
-             else if (dateCheck.isSelected()) {
-               System.out.println("date range report to be generated");
-               
-               report = showByDate(startPicker.getValue(),endPicker.getValue());
-             }
-             else if (farmCheck.isSelected()) {
-               System.out.println("farm report to be generated");
-              id = textFarmID.getText();
-             
-               report = showByFarmID(id);
-             }
-             else {
-               System.out.println("no analyze method is selected");
-             }
-             
-             System.out.println("current report is " + report.getTitle());
-             
-             
-             if (report != null) {
-               // save report as csv
-               Text text = new Text (report.getTitle());   
-               text.setFont(Font.font("Helvetica",30));
-               text.setFill (Paint.valueOf("blue")); 
-               TextFlow textflow = new TextFlow();
-               textflow.getChildren().addAll(text);
-               textflow.setTextAlignment (TextAlignment.CENTER);
-        
+             if  (!annulCheck.isSelected() && !monthCheck.isSelected() && !dateCheck.isSelected() && !farmCheck.isSelected()) {
+               Text warning = new Text ("No Analyze Method Selected");   
+               warning.setFont(Font.font("Helvetica",40));
+               warning.setFill (Paint.valueOf("Red")); 
+               TextFlow warningtextflow = new TextFlow();
+               warningtextflow.getChildren().addAll(warning);
+               warningtextflow.setTextAlignment (TextAlignment.CENTER);               
                // put report in sceneOut
-               Group groupOut = new Group();
-               groupOut.getChildren().addAll (report.createPieChart());
-               groupOut.getChildren().add(textflow);
-
-               Scene sceneOut = new Scene(groupOut); 
-               Stage stage = new Stage();             
-               stage.setScene(sceneOut);
-               stage.setTitle("Report");
-               stage.setHeight(600);
-               stage.setWidth(600);
-               stage.show();
+               Group groupOutwarning = new Group();
+               groupOutwarning.getChildren().add(warningtextflow);
+               Scene sceneOutwarning = new Scene(groupOutwarning); 
+               Stage stagewarning = new Stage();             
+               stagewarning.setScene(sceneOutwarning);
+               stagewarning.setTitle("warning");
+               stagewarning.setHeight(600);
+               stagewarning.setWidth(600);
+               stagewarning.show();
              }
              
              else {
-            
-               Text text = new Text ("Report is null ");
-               text.setFont(Font.font("Helvetica",30));
-               text.setFill (Paint.valueOf("blue"));               
-               TextFlow textflow = new TextFlow();
+               // to generate report
+               if (annulCheck.isSelected()) {
+                 System.out.println("annul report to be generated");
+                 report = showByFullYear();
+              }
+              else if (monthCheck.isSelected()) {
+                System.out.println("month report to be generated");
+                report = showByMonth(month);
+              }              
+              else if (dateCheck.isSelected()) {
+                System.out.println("date range report to be generated");                
+                report = showByDate(startPicker.getValue(),endPicker.getValue());
+              }
+              else if (farmCheck.isSelected()) {
+                System.out.println("farm report to be generated");
+                id = textFarmID.getText();             
+                report = showByFarmID(id);
+              }
                
-               textflow.getChildren().addAll(text);
-               textflow.setTextAlignment (TextAlignment.CENTER);
-               Scene sceneOut = new Scene(textflow);
+              if (report != null) {
+                // save report as csv
+                Text text = new Text (report.getTitle());   
+                text.setFont(Font.font("Helvetica",30));
+                text.setFill (Paint.valueOf("blue")); 
+                TextFlow textflow = new TextFlow();
+                textflow.getChildren().addAll(text);
+                textflow.setTextAlignment (TextAlignment.CENTER);        
+                // put report in sceneOut
+                Group groupOut = new Group();
+                groupOut.getChildren().addAll (report.createPieChart());
+                groupOut.getChildren().add(textflow);
+                Scene sceneOut = new Scene(groupOut); 
+                Stage stage = new Stage();             
+                stage.setScene(sceneOut);
+                stage.setTitle("Report");
+                stage.setHeight(600);
+                stage.setWidth(600);
+                stage.show();
+            }            
+          }           
                
-               Stage stage = new Stage();             
-               stage.setScene(sceneOut);
-               stage.setTitle("Report");
-               stage.setHeight(600);
-               stage.setWidth(600);
-               stage.show();
-             }
+        }
+              
+             
          }        
        }); 
-       
        
        b5.setOnAction (new EventHandler<ActionEvent>() {         
          @Override
          public void handle(ActionEvent event) {
            // put event triered by button1 here
            // show report in screen
-
-             // to generate report
-             if (annulCheck.isSelected()) {
-                System.out.println("annul report to be generated");
-                report = showByFullYear();
-             }
-             else if (monthCheck.isSelected()) {
-               System.out.println("month report to be generated");
-               report = showByMonth(month);
-             }
-             
-             else if (dateCheck.isSelected()) {
-               System.out.println("date range report to be generated");
-             
-               report = showByDate(startPicker.getValue(),endPicker.getValue());
-             }
-             else if (farmCheck.isSelected()) {
-               System.out.println("farm report to be generated");
-               report = showByFarmID(id);
-             }
-             else {
-               System.out.println("no analyze method is selected");
-             }
+           if (singleFile == null && selectedFiles == null) {
+             Text warning = new Text ("No datafile Selected");   
+             warning.setFont(Font.font("Helvetica",40));
+             warning.setFill (Paint.valueOf("Red")); 
+             TextFlow warningtextflow = new TextFlow();
+             warningtextflow.getChildren().addAll(warning);
+             warningtextflow.setTextAlignment (TextAlignment.CENTER);               
+             // put report in sceneOut
+             Group groupOutwarning = new Group();
+             groupOutwarning.getChildren().add(warningtextflow);
+             Scene sceneOutwarning = new Scene(groupOutwarning); 
+             Stage stagewarning = new Stage();             
+             stagewarning.setScene(sceneOutwarning);
+             stagewarning.setTitle("warning");
+             stagewarning.setHeight(600);
+             stagewarning.setWidth(600);
+             stagewarning.show();
+           }
            
+           else {
              
-             System.out.println("----ss---------------------------");
-             System.out.println("current report is " + report.getTitle());
-             System.out.println("----ss---------------------------");
-            
-             FileChooser fileChooser = new FileChooser();
-             
-             //Set extension filter
-             FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("csv files (*.csv)", "*.csv");
-             fileChooser.getExtensionFilters().add(extFilter);
-             
-             //Show save file dialog
-             File file = fileChooser.showSaveDialog(primaryStage);
-             ArrayList<ArrayList<Milk>> myReportList= null;
-             
-             
-             if (report != null) {
-               // write data from report to csv
-               System.out.println("report will be saved");
-               
-               if (annulCheck.isSelected()) {
-                 myReportList = report.getAnnual();
-              }
-              else if (monthCheck.isSelected()) {
-                myReportList = report.getMonthReport();
-              }
-              
-              else if (dateCheck.isSelected()) {
-                myReportList = report.getRangeReport();
-              }
-              else if (farmCheck.isSelected()) {
-                myReportList = report.getReportList();
-              }
-              else {
-                myReportList = null;
-              }
-               
-              if (myReportList != null) {
-                try {
-                  FileWriter csvWriter;
-                  csvWriter = new FileWriter(file);
-                  
-                  csvWriter.append(report.getTitle());
-                  csvWriter.append("\n");
-                  
-                  csvWriter.append("FarmID");
-                  csvWriter.append(",");
-                  csvWriter.append("Production Date");
-                  csvWriter.append(",");
-                  csvWriter.append("Milk Weight");
-                  csvWriter.append("\n");
-                  
-                  reportTreeSet = new TreeSet<>();
-                  for (ArrayList<Milk> innerList: myReportList) {
-                    for (Milk m: innerList) {
-                      reportTreeSet.add(m);
-                    }
-                  }
-                  
-                  for (Milk currentMilk : reportTreeSet) {
-                    csvWriter.append(currentMilk.getFarmID());
-                    csvWriter.append(",");
-                    SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
-                    csvWriter.append(formatter.format(currentMilk.getDate()));
-                    csvWriter.append(",");
-                    csvWriter.append(Integer.toString(currentMilk.getWeight()));
-                    csvWriter.append("\n");
-                  }
-
-
-                 csvWriter.close();
-                  
-              } catch (IOException ex) {
-                }
-              }
-
+             if (!annulCheck.isSelected() && !monthCheck.isSelected() && !dateCheck.isSelected() && !farmCheck.isSelected()) {
+               Text warning = new Text ("No Analyze Method Selected");   
+               warning.setFont(Font.font("Helvetica",40));
+               warning.setFill (Paint.valueOf("Red")); 
+               TextFlow warningtextflow = new TextFlow();
+               warningtextflow.getChildren().addAll(warning);
+               warningtextflow.setTextAlignment (TextAlignment.CENTER);               
+               // put report in sceneOut
+               Group groupOutwarning = new Group();
+               groupOutwarning.getChildren().add(warningtextflow);
+               Scene sceneOutwarning = new Scene(groupOutwarning); 
+               Stage stagewarning = new Stage();             
+               stagewarning.setScene(sceneOutwarning);
+               stagewarning.setTitle("warning");
+               stagewarning.setHeight(600);
+               stagewarning.setWidth(600);
+               stagewarning.show();
              }
-             
              else {
+               // to generate report and save it
+               if (annulCheck.isSelected()) {
+                  System.out.println("annul report to be generated");
+                  report = showByFullYear();
+               }
+               else if (monthCheck.isSelected()) {
+                 System.out.println("month report to be generated");
+                 report = showByMonth(month);
+               }
                
-               Text text = new Text ("Report is null ");
-               text.setFont(Font.font("Helvetica",30));
-               text.setFill (Paint.valueOf("blue"));               
-               TextFlow textflow = new TextFlow();
+               else if (dateCheck.isSelected()) {
+                 System.out.println("date range report to be generated");
                
-               textflow.getChildren().addAll(text);
-               textflow.setTextAlignment (TextAlignment.CENTER);
-               Scene sceneOut = new Scene(textflow);
+                 report = showByDate(startPicker.getValue(),endPicker.getValue());
+               }
+               else if (farmCheck.isSelected()) {
+                 System.out.println("farm report to be generated");
+                 report = showByFarmID(id);
+               }
+
+               FileChooser fileChooser = new FileChooser();             
+               //Set extension filter
+               FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("csv files (*.csv)", "*.csv");
+               fileChooser.getExtensionFilters().add(extFilter);
                
-               Stage stage = new Stage();             
-               stage.setScene(sceneOut);
-               stage.setTitle("Report");
-               stage.setHeight(600);
-               stage.setWidth(600);
-               stage.show();
+               //Show save file dialog
+               File file = fileChooser.showSaveDialog(primaryStage);
+               ArrayList<ArrayList<Milk>> myReportList= null;             
+               
+               if (report != null) {
+                 // write data from report to csv             
+                if (annulCheck.isSelected()) {
+                   myReportList = report.getAnnual();
+                   }
+                if (monthCheck.isSelected()) {
+                  myReportList = report.getMonthReport();
+                  }              
+                if (dateCheck.isSelected()) {
+                  myReportList = report.getRangeReport();
+                  }
+                if (farmCheck.isSelected()) {
+                  myReportList = report.getReportList();
+                  }
+                 
+                if (myReportList != null) {
+                  try {
+                    FileWriter csvWriter;
+                    csvWriter = new FileWriter(file);                  
+                    csvWriter.append(report.getTitle());
+                    csvWriter.append("\n");                  
+                    csvWriter.append("FarmID");
+                    csvWriter.append(",");
+                    csvWriter.append("Production Date");
+                    csvWriter.append(",");
+                    csvWriter.append("Milk Weight");
+                    csvWriter.append("\n");                  
+                    reportTreeSet = new TreeSet<>();
+                    for (ArrayList<Milk> innerList: myReportList) {
+                      for (Milk m: innerList) {reportTreeSet.add(m);}
+                    }
+                    
+                    for (Milk currentMilk : reportTreeSet) {
+                      csvWriter.append(currentMilk.getFarmID());
+                      csvWriter.append(",");
+                      SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+                      csvWriter.append(formatter.format(currentMilk.getDate()));
+                      csvWriter.append(",");
+                      csvWriter.append(Integer.toString(currentMilk.getWeight()));
+                      csvWriter.append("\n");
+                    }
+                   csvWriter.close();}               
+               catch (Exception ex) { }
+                }
+                
+               }
              }
+          }           
          }        
        }); 
        
-       
-       b6.setOnAction (new EventHandler<ActionEvent>() {
-         
+       b6.setOnAction (new EventHandler<ActionEvent>() {         
          @Override
          public void handle(ActionEvent event) {
            clearData();
@@ -654,10 +617,9 @@ public class Main  extends Application implements Stat {
     
   }
 
-  @Override
- public void readSingleFile(String filename) {
-     
-     // to store all milk in storage
+ @Override
+ public void readSingleFile(String filename) {  //method used to read single file
+     // to initiate all lists and maps
      storage = new ArrayList<>();
      monthMap = new TreeMap<>();
      farmMap = new TreeMap<>();	 
@@ -680,13 +642,16 @@ public class Main  extends Application implements Stat {
            String createFarmId = null;
            Integer createWeight = 0;
            
+           // this try is used to track exception for date, if date is missing or in wrong format, pass this record
            try {
              createDate = format.parse(milkStrings[0]);
              createFarmId= milkStrings[1];
-             if (!createFarmId.startsWith("Farm")) {
+             
+             if (!createFarmId.startsWith("Farm")) { // if Farm ID in a different style, using UnknownFarm instead
                createFarmId = "UnknownFarm";
              }
              
+             // this is used to find the correct weight, if in wrong format or missing, put 0 instead
              try {
                createWeight = Integer.parseInt(milkStrings[2]);
              }
@@ -758,6 +723,7 @@ public class Main  extends Application implements Stat {
      
      System.out.println("-----------after reading file ---------------------------");
      
+     // the following printout is used to track all information in map and lists after reading files
      if (monthMap != null) {
        for (Integer key: monthMap.keySet()) {
            System.out.println("month " + key + " : " + monthMap.get(key));
@@ -779,12 +745,14 @@ public class Main  extends Application implements Stat {
 
  @Override
  public void readMultipleFile(String[] filenames) {
-     // to store all milk in storage
+   
+     // to store information in following containers
      storage = new ArrayList<>();     
      monthMap = new TreeMap<>();
      farmMap = new TreeMap<>();	 
      farms = new ArrayList<>();
-		 
+     
+     // the information can be referred to the readSingle file method
 	 for(int i = 0; i < filenames.length; i++) {	 
 		// start reading file
 	     BufferedReader br = null;
@@ -873,8 +841,7 @@ public class Main  extends Application implements Stat {
 	           catch (Exception e) {
 	             System.out.println("pass this invalid date record");
               }	          
-	       }
-	       
+	       }       
 	       
 	     } catch (FileNotFoundException e) {
 	       e.printStackTrace();
@@ -882,6 +849,8 @@ public class Main  extends Application implements Stat {
 	       e.printStackTrace();
 	     } 
 	}
+	 
+	 System.out.println("-------------done with reading---------");
 	 
      if (monthMap != null) {
        for (Integer key: monthMap.keySet()) {
@@ -899,11 +868,10 @@ public class Main  extends Application implements Stat {
        for (Farm farm: farms) {
            System.out.println("farm is " + farm.getFarmID() + " " + farm.getFarmProduct());
        }
-     }
-		 
+     }		 
   }
 
- @Override
+@Override
  public Report showByFarmID(String id) {
     // generate farmId report
     Report farmReport = new Report("FarmId Report");
@@ -934,7 +902,7 @@ public class Main  extends Application implements Stat {
     System.out.println("generate here annulReport" + annulReport.getTitle());
     return annulReport;
   }
-  
+ 
  @Override
  public Report showByDate(LocalDate start, LocalDate end) {
     // TODO Auto-generated method stub
@@ -944,14 +912,6 @@ public class Main  extends Application implements Stat {
     // report.addMilk ();
     
     return dateReport;
-  }
-
- @Override
- public File exportReport(Report report) {
-    // TODO Auto-generated method stub
-    // need to deal with situation when report is null..
-    // used to save report as file
-    return null;
   }
 
  @Override
