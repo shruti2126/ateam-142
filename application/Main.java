@@ -551,6 +551,8 @@ public class Main  extends Application implements Stat {
                   }
                  
                 if (myReportList != null) {
+                  
+                  // this line may need to change to save data
                   try {
                     FileWriter csvWriter;
                     csvWriter = new FileWriter(file);                  

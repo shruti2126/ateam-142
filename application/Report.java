@@ -60,11 +60,11 @@ public class Report {
 
   private PieChart pieChart;
 	private String title;
-	private ArrayList<ArrayList<Milk>> reportList = new ArrayList<ArrayList<Milk>>();
-	private ArrayList<ArrayList<Milk>> monthReport = new ArrayList<ArrayList<Milk>>();
 	private int[] monthWeights;
+	
+	private ArrayList<ArrayList<Milk>> reportList = new ArrayList<ArrayList<Milk>>();
+	private ArrayList<ArrayList<Milk>> monthReport = new ArrayList<ArrayList<Milk>>();	
 	private ArrayList<ArrayList<Milk>> annual = new ArrayList<ArrayList<Milk>>();
-
 	private ArrayList<ArrayList<Milk>> rangeReport = new ArrayList<ArrayList<Milk>>();
 
 	public Report(String title) {
