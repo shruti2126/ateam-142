@@ -15,13 +15,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
-//import com.fasterxml.jackson.core.JsonProcessingException;
-//import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -29,9 +30,13 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
@@ -47,14 +52,7 @@ import javafx.stage.Stage;
  *
  *this is the main method to show UI and do the milk statistical analysis
  */
-/**
- * @author Administrator
- *
- */
-/**
- * @author Administrator
- *
- */
+
 public class Main  extends Application implements Stat {  
   private List <Milk> storage; // list of all milk records in the csv files  
   private TreeSet<Milk> reportTreeSet; // this is the milk stored in the treeSet for report purpose  
@@ -287,53 +285,59 @@ public class Main  extends Application implements Stat {
                 System.out.println("selected month");
                 annulCheck.setSelected(false);
                 dateCheck.setSelected(false);
-                farmCheck.setSelected(false);
-                
-                try {
-                monthString = (String) comboBoxMonth.getValue();
-                switch(monthString) {
-                  case "Janunary":
-                    month = 1;
-                    break;
-                  case "Febrary":
-                    month = 2;
-                    break;
-                  case "March":
-                    month = 3;
-                    break;
-                  case "April":
-                    month = 4;
-                    break;
-                  case "May":
-                    month = 5;
-                    break;
-                  case "June":
-                    month = 6;
-                    break;
-                  case "July":
-                    month = 7;
-                    break;
-                  case "August":
-                    month = 8;
-                    break;
-                  case "September":
-                    month = 9;
-                    break;
-                  case "Octember":
-                    month = 10;
-                    break;
-                  case "November":
-                    month = 11;
-                    break;
-                  case "December":
-                    month = 12;
-                    break;
-                  default:
-                    month = 0;
+                farmCheck.setSelected(false);                
+                monthSelect(comboBoxMonth);
                 }
-                }
-               catch (Exception e) {System.out.println("no month selected");  }
-                }
+          }
+
+          /**
+           * @param comboBoxMonth report month selected
+           */
+          private void monthSelect(ComboBox<String> comboBoxMonth) {
+            try {
+            monthString = (String) comboBoxMonth.getValue();
+            switch(monthString) {
+              case "Janunary":
+                month = 1;
+                break;
+              case "Febrary":
+                month = 2;
+                break;
+              case "March":
+                month = 3;
+                break;
+              case "April":
+                month = 4;
+                break;
+              case "May":
+                month = 5;
+                break;
+              case "June":
+                month = 6;
+                break;
+              case "July":
+                month = 7;
+                break;
+              case "August":
+                month = 8;
+                break;
+              case "September":
+                month = 9;
+                break;
+              case "Octember":
+                month = 10;
+                break;
+              case "November":
+                month = 11;
+                break;
+              case "December":
+                month = 12;
+                break;
+              default:
+                month = 0;
+            }
+            }
+        catch (Exception e) {System.out.println("no month selected");}
           }     
          });
          
@@ -374,91 +378,301 @@ public class Main  extends Application implements Stat {
            // put event triered by button1 here
            // show report in screen
            if (singleFile == null && selectedFiles == null) {
-             Text warning = new Text ("No datafile Selected");   
-             warning.setFont(Font.font("Helvetica",40));
-             warning.setFill (Paint.valueOf("Red")); 
-             TextFlow warningtextflow = new TextFlow();
-             warningtextflow.getChildren().addAll(warning);
-             warningtextflow.setTextAlignment (TextAlignment.CENTER);               
-             // put report in sceneOut
-             Group groupOutwarning = new Group();
-             groupOutwarning.getChildren().add(warningtextflow);
-             Scene sceneOutwarning = new Scene(groupOutwarning); 
-             Stage stagewarning = new Stage();             
-             stagewarning.setScene(sceneOutwarning);
-             stagewarning.setTitle("warning");
-             stagewarning.setHeight(600);
-             stagewarning.setWidth(600);
-             stagewarning.show();
+             showNoFileSelectionMessage();
            }
            
-           else {
-             
+           else {             
              if  (!annulCheck.isSelected() && !monthCheck.isSelected() && !dateCheck.isSelected() && !farmCheck.isSelected()) {
-               Text warning = new Text ("No Analyze Method Selected");   
-               warning.setFont(Font.font("Helvetica",40));
-               warning.setFill (Paint.valueOf("Red")); 
-               TextFlow warningtextflow = new TextFlow();
-               warningtextflow.getChildren().addAll(warning);
-               warningtextflow.setTextAlignment (TextAlignment.CENTER);               
-               // put report in sceneOut
-               Group groupOutwarning = new Group();
-               groupOutwarning.getChildren().add(warningtextflow);
-               Scene sceneOutwarning = new Scene(groupOutwarning); 
-               Stage stagewarning = new Stage();             
-               stagewarning.setScene(sceneOutwarning);
-               stagewarning.setTitle("warning");
-               stagewarning.setHeight(600);
-               stagewarning.setWidth(600);
-               stagewarning.show();
+                     warningWithNoSelection(); // pop out warning message when none is selected
              }
              
              else {
                // to generate report
-               if (annulCheck.isSelected()) {
-                 System.out.println("annul report to be generated");
-                 report = showByFullYear();
-              }
-              else if (monthCheck.isSelected()) {
-                System.out.println("month report to be generated");
-                report = showByMonth(month);
-              }              
-              else if (dateCheck.isSelected()) {
-                System.out.println("date range report to be generated");                
-                report = showByDate(startPicker.getValue(),endPicker.getValue());
-              }
-              else if (farmCheck.isSelected()) {
-                System.out.println("farm report to be generated");
-                id = textFarmID.getText();             
-                report = showByFarmID(id);
-              }
-               
-              if (report != null) {
-                // save report as csv
-                Text text = new Text (report.getTitle());   
-                text.setFont(Font.font("Helvetica",30));
-                text.setFill (Paint.valueOf("blue")); 
-                TextFlow textflow = new TextFlow();
-                textflow.getChildren().addAll(text);
-                textflow.setTextAlignment (TextAlignment.CENTER);        
-                // put report in sceneOut
-                Group groupOut = new Group();
-                groupOut.getChildren().addAll (report.createPieChart());
-                groupOut.getChildren().add(textflow);
-                Scene sceneOut = new Scene(groupOut); 
-                Stage stage = new Stage();             
-                stage.setScene(sceneOut);
-                stage.setTitle("Report");
-                stage.setHeight(600);
-                stage.setWidth(600);
-                stage.show();
-            }            
-          }           
-               
-        }
-              
+                generateReportFromSelected(annulCheck, farmCheck, textFarmID, startPicker, endPicker,
+                  dateCheck, monthCheck);
+              // following is the displaying piechart and the summary table
+                ArrayList<ArrayList<Milk>> myReportList= null;     // initiate report ready to display        
+                // show scene of the piechart
+                displayPiechart();                
+                // show scene of the percentage
+                displayTable (annulCheck, farmCheck, dateCheck, monthCheck);     
+          }   
+        }              
+       }
+
+        private void displayTable(CheckBox annulCheck, CheckBox farmCheck, CheckBox dateCheck,
+            CheckBox monthCheck) {
+          ArrayList<ArrayList<Milk>> myReportList;
+          if (annulCheck.isSelected() || monthCheck.isSelected()) {
+             TreeSet <Milk> storedReportSet = new TreeSet<>(); 
+             if (annulCheck.isSelected()) {myReportList = report.getAnnual();}
+             else {myReportList = report.getMonthReport();}           
+             int totalWeight = 0;
+             for (ArrayList<Milk> farmList: myReportList) {
+                 int weight = 0;
+                 String farmName = null;
+                 for (Milk currentMilk : farmList) {
+                   farmName = currentMilk.getFarmID();
+                   weight += currentMilk.getWeight();
+                 }
+                 if (farmName != null) {
+                   Milk sumMilk = new Milk (new Date(),farmName, weight);
+                   totalWeight += weight;
+                   storedReportSet.add(sumMilk);
+                 }
+             } 
              
-         }        
+             Label weightlabel = new Label("total milk weight: " + String.valueOf(totalWeight));
+             weightlabel.setFont(new Font("Arial", 20));
+     
+             TableView<AnnualReport> table = new TableView();
+
+//                 TableColumn<FarmIDReport, String> reporTableColumnMonth = new TableColumn<>("Month");
+             TableColumn<AnnualReport, String> reporTableColumnWeight = new TableColumn<>("Milk Weight");
+             TableColumn<AnnualReport, String> reporTableColumnPercent = new TableColumn<>("Percentage(%)");
+             TableColumn<AnnualReport, String> reporTableColumnFarmID = new TableColumn<>("Farm ID");
+             
+             reporTableColumnFarmID.setCellValueFactory(new PropertyValueFactory<AnnualReport,String>("FarmIDStr"));
+             reporTableColumnWeight.setCellValueFactory(new PropertyValueFactory<AnnualReport,String>("weightStr"));
+             reporTableColumnPercent.setCellValueFactory(new PropertyValueFactory<AnnualReport,String>("percentageStr"));
+             
+             
+             ObservableList<AnnualReport> data = 
+                 FXCollections.observableArrayList();
+             
+             ArrayList <AnnualReport> annualList = new ArrayList<>();
+             for (Milk currentMilk: storedReportSet) {
+                 float percent = (currentMilk.getWeight() * 100.0f) / totalWeight;
+                 annualList.add (new AnnualReport(currentMilk.getFarmID(),String.valueOf(currentMilk.getWeight()),String.valueOf(percent)));
+             }
+
+             data.addAll(annualList);
+             
+             table.setItems(data);
+             table.getColumns().addAll(reporTableColumnFarmID, reporTableColumnWeight, reporTableColumnPercent);
+             Group groupOut = new Group();                 
+             VBox vbox = new VBox();
+             vbox.getChildren().addAll(weightlabel, table);                 
+             Scene sceneOut = new Scene(vbox); 
+             
+             Stage stage = new Stage();          
+             stage.setTitle("Report Summary");
+             stage.setWidth(300);
+             stage.setHeight(500);                 
+             stage.setScene(sceneOut);
+             stage.show();           
+          
+           }
+           
+           else if (farmCheck.isSelected()) {
+             TreeSet <Milk> storedReportSet = new TreeSet<>(); 
+             myReportList = report.getReportList();                 
+             int totalWeight = 0;
+             String farmName = null;
+             for (ArrayList<Milk> farmList: myReportList) {
+                 int weight = 0;
+                 farmName = null;
+                 Date produceDate = null;
+                 for (Milk currentMilk : farmList) {                        
+                   farmName = currentMilk.getFarmID();
+                   weight += currentMilk.getWeight();
+                   produceDate = currentMilk.getDate();
+                 }
+                 
+                 if (farmName != null) {
+                   Milk sumMilk = new Milk (produceDate,farmName, weight);
+                   totalWeight += weight;
+                   storedReportSet.add(sumMilk);
+                 }
+               }
+             
+             Label weightlabel = new Label("total milk weight: " + String.valueOf(totalWeight));
+             weightlabel.setFont(new Font("Arial", 20));
+     
+             TableView<FarmIDReport> table = new TableView();
+
+             TableColumn<FarmIDReport, String> reporTableColumnMonth = new TableColumn<>("Month");
+             TableColumn<FarmIDReport, String> reporTableColumnWeight = new TableColumn<>("Milk Weight");
+             TableColumn<FarmIDReport, String> reporTableColumnPercent = new TableColumn<>("Percentage(%)");                 
+             
+             reporTableColumnMonth.setCellValueFactory(new PropertyValueFactory<FarmIDReport,String>("monthStr"));
+             reporTableColumnWeight.setCellValueFactory(new PropertyValueFactory<FarmIDReport,String>("weightStr"));
+             reporTableColumnPercent.setCellValueFactory(new PropertyValueFactory<FarmIDReport,String>("percentageStr"));
+             
+             
+             ObservableList<FarmIDReport> data = 
+                 FXCollections.observableArrayList();
+             
+             ArrayList <FarmIDReport> annualList = new ArrayList<>();
+             for (Milk currentMilk: storedReportSet) {
+                 float percent = (currentMilk.getWeight() * 100.0f) / totalWeight;
+                 annualList.add (new FarmIDReport(String.valueOf(currentMilk.getDate().getMonth()+1),
+                     String.valueOf(currentMilk.getWeight()),String.valueOf(percent)));
+             }
+
+             data.addAll(annualList);
+             
+             table.setItems(data);
+             table.getColumns().addAll(reporTableColumnMonth, reporTableColumnWeight, reporTableColumnPercent);
+             Group groupOut = new Group();                 
+             VBox vbox = new VBox();
+             vbox.getChildren().addAll(weightlabel, table);                 
+             Scene sceneOut = new Scene(vbox);                 
+             Stage stage = new Stage();          
+             stage.setTitle("Report Summary");
+             stage.setWidth(300);
+             stage.setHeight(500);                 
+             stage.setScene(sceneOut);
+             stage.show();    
+             
+           }                  
+           
+           else if (dateCheck.isSelected()) {
+             TreeSet <Milk> storedReportSet = new TreeSet<>(); 
+             myReportList = report.getRangeReport();              
+
+             int totalWeight = 0;
+             for (ArrayList<Milk> farmList: myReportList) {
+                 int weight = 0;
+                 String farmName = null;
+                 for (Milk currentMilk : farmList) {
+                   farmName = currentMilk.getFarmID();
+                   weight += currentMilk.getWeight();
+                 }
+                 if (farmName != null) {
+                   Milk sumMilk = new Milk (new Date(),farmName, weight);
+                   totalWeight += weight;
+                   storedReportSet.add(sumMilk);
+                 }
+             } 
+             
+             Label weightlabel = new Label("total milk weight: " + String.valueOf(totalWeight));
+             weightlabel.setFont(new Font("Arial", 20));
+     
+             TableView<AnnualReport> table = new TableView();
+
+//                 TableColumn<FarmIDReport, String> reporTableColumnMonth = new TableColumn<>("Month");
+             TableColumn<AnnualReport, String> reporTableColumnWeight = new TableColumn<>("Milk Weight");
+             TableColumn<AnnualReport, String> reporTableColumnPercent = new TableColumn<>("Percentage(%)");
+             TableColumn<AnnualReport, String> reporTableColumnFarmID = new TableColumn<>("Farm ID");
+             
+             reporTableColumnFarmID.setCellValueFactory(new PropertyValueFactory<AnnualReport,String>("FarmIDStr"));
+             reporTableColumnWeight.setCellValueFactory(new PropertyValueFactory<AnnualReport,String>("weightStr"));
+             reporTableColumnPercent.setCellValueFactory(new PropertyValueFactory<AnnualReport,String>("percentageStr"));
+             
+             
+             ObservableList<AnnualReport> data = 
+                 FXCollections.observableArrayList();
+             
+             ArrayList <AnnualReport> annualList = new ArrayList<>();
+             for (Milk currentMilk: storedReportSet) {
+                 float percent = (currentMilk.getWeight() * 100.0f) / totalWeight;
+                 annualList.add (new AnnualReport(currentMilk.getFarmID(),String.valueOf(currentMilk.getWeight()),String.valueOf(percent)));
+             }
+
+             data.addAll(annualList);
+             
+             table.setItems(data);
+             table.getColumns().addAll(reporTableColumnFarmID, reporTableColumnWeight, reporTableColumnPercent);
+             Group groupOut = new Group();                 
+             VBox vbox = new VBox();
+             vbox.getChildren().addAll(weightlabel, table);                 
+             Scene sceneOut = new Scene(vbox); 
+             
+             Stage stage = new Stage();          
+             stage.setTitle("Report Summary");
+             stage.setWidth(300);
+             stage.setHeight(500);                 
+             stage.setScene(sceneOut);
+             stage.show();    
+           }
+        }
+
+        private void generateReportFromSelected(CheckBox annulCheck, CheckBox farmCheck,
+            TextField textFarmID, DatePicker startPicker, DatePicker endPicker, CheckBox dateCheck,
+            CheckBox monthCheck) {
+          if (annulCheck.isSelected()) {
+             System.out.println("annul report to be generated");
+             report = showByFullYear();
+          }
+          else if (monthCheck.isSelected()) {
+            System.out.println("month report to be generated");
+            report = showByMonth(month);
+          }              
+          else if (dateCheck.isSelected()) {
+            System.out.println("date range report to be generated");                
+            report = showByDate(startPicker.getValue(),endPicker.getValue());
+          }
+          else if (farmCheck.isSelected()) {
+            System.out.println("farm report to be generated");
+            id = textFarmID.getText();             
+            report = showByFarmID(id);
+          }
+        }
+
+        private void showNoFileSelectionMessage() {
+          Text warning = new Text ("No datafile Selected");   
+           warning.setFont(Font.font("Helvetica",40));
+           warning.setFill (Paint.valueOf("Red")); 
+           TextFlow warningtextflow = new TextFlow();
+           warningtextflow.getChildren().addAll(warning);
+           warningtextflow.setTextAlignment (TextAlignment.CENTER);               
+           // put report in sceneOut
+           Group groupOutwarning = new Group();
+           groupOutwarning.getChildren().add(warningtextflow);
+           Scene sceneOutwarning = new Scene(groupOutwarning); 
+           Stage stagewarning = new Stage();             
+           stagewarning.setScene(sceneOutwarning);
+           stagewarning.setTitle("warning");
+           stagewarning.setHeight(600);
+           stagewarning.setWidth(600);
+           stagewarning.show();
+        }
+
+        /**
+         * if no selection, show this error message
+         */
+        private void warningWithNoSelection() {
+          Text warning = new Text ("No Analyze Method Selected");   
+           warning.setFont(Font.font("Helvetica",40));
+           warning.setFill (Paint.valueOf("Red")); 
+           TextFlow warningtextflow = new TextFlow();
+           warningtextflow.getChildren().addAll(warning);
+           warningtextflow.setTextAlignment (TextAlignment.CENTER);               
+           // put report in sceneOut
+           Group groupOutwarning = new Group();
+           groupOutwarning.getChildren().add(warningtextflow);
+           Scene sceneOutwarning = new Scene(groupOutwarning); 
+           Stage stagewarning = new Stage();             
+           stagewarning.setScene(sceneOutwarning);
+           stagewarning.setTitle("warning");
+           stagewarning.setHeight(600);
+           stagewarning.setWidth(600);
+           stagewarning.show();
+        }
+
+        /**
+         * display pie chart
+         */
+        private void displayPiechart() {
+          Text text = new Text (report.getTitle());   
+          text.setFont(Font.font("Helvetica",20));
+          text.setFill (Paint.valueOf("blue")); 
+          TextFlow textflow = new TextFlow();
+          textflow.getChildren().addAll(text);
+          textflow.setTextAlignment (TextAlignment.CENTER);        
+          // put report in sceneOut
+          Group groupOut = new Group();
+          groupOut.getChildren().addAll (report.createPieChart());
+          groupOut.getChildren().add(textflow);
+          Scene sceneOut = new Scene(groupOut); 
+          Stage stage = new Stage();             
+          stage.setScene(sceneOut);
+          stage.setTitle("Report");
+          stage.setHeight(600);
+          stage.setWidth(600);
+          stage.show();
+        }        
        }); 
        
        b5.setOnAction (new EventHandler<ActionEvent>() {         
@@ -467,64 +681,17 @@ public class Main  extends Application implements Stat {
            // put event triered by button1 here
            // show report in screen
            if (singleFile == null && selectedFiles == null) {
-             Text warning = new Text ("No datafile Selected");   
-             warning.setFont(Font.font("Helvetica",40));
-             warning.setFill (Paint.valueOf("Red")); 
-             TextFlow warningtextflow = new TextFlow();
-             warningtextflow.getChildren().addAll(warning);
-             warningtextflow.setTextAlignment (TextAlignment.CENTER);               
-             // put report in sceneOut
-             Group groupOutwarning = new Group();
-             groupOutwarning.getChildren().add(warningtextflow);
-             Scene sceneOutwarning = new Scene(groupOutwarning); 
-             Stage stagewarning = new Stage();             
-             stagewarning.setScene(sceneOutwarning);
-             stagewarning.setTitle("warning");
-             stagewarning.setHeight(600);
-             stagewarning.setWidth(600);
-             stagewarning.show();
+             fileNotFoundMessage();
            }
            
-           else {
-             
+           else {             
              if (!annulCheck.isSelected() && !monthCheck.isSelected() && !dateCheck.isSelected() && !farmCheck.isSelected()) {
-               Text warning = new Text ("No Analyze Method Selected");   
-               warning.setFont(Font.font("Helvetica",40));
-               warning.setFill (Paint.valueOf("Red")); 
-               TextFlow warningtextflow = new TextFlow();
-               warningtextflow.getChildren().addAll(warning);
-               warningtextflow.setTextAlignment (TextAlignment.CENTER);               
-               // put report in sceneOut
-               Group groupOutwarning = new Group();
-               groupOutwarning.getChildren().add(warningtextflow);
-               Scene sceneOutwarning = new Scene(groupOutwarning); 
-               Stage stagewarning = new Stage();             
-               stagewarning.setScene(sceneOutwarning);
-               stagewarning.setTitle("warning");
-               stagewarning.setHeight(600);
-               stagewarning.setWidth(600);
-               stagewarning.show();
+               noSelectMessage();
              }
              else {
                // to generate report and save it
-               if (annulCheck.isSelected()) {
-                  System.out.println("annul report to be generated");
-                  report = showByFullYear();
-               }
-               else if (monthCheck.isSelected()) {
-                 System.out.println("month report to be generated");
-                 report = showByMonth(month);
-               }
-               
-               else if (dateCheck.isSelected()) {
-                 System.out.println("date range report to be generated");
-               
-                 report = showByDate(startPicker.getValue(),endPicker.getValue());
-               }
-               else if (farmCheck.isSelected()) {
-                 System.out.println("farm report to be generated");
-                 report = showByFarmID(id);
-               }               
+               generateReportFromSelection(annulCheck, farmCheck, startPicker, endPicker, dateCheck,
+                  monthCheck);               
                
                FileChooser fileChooser = new FileChooser();             
                //Set extension filter
@@ -535,156 +702,246 @@ public class Main  extends Application implements Stat {
                File file = fileChooser.showSaveDialog(primaryStage);
                ArrayList<ArrayList<Milk>> myReportList= null;             
                TreeSet <Milk> storedReportSet = new TreeSet<>();
-               
-               if (report != null) {
                  // write data from report to csv             
                 if (annulCheck.isSelected() || monthCheck.isSelected()) {
-                   if (annulCheck.isSelected()) {myReportList = report.getAnnual();}
-                   else {myReportList = report.getMonthReport();}                     
-                   
-                   int totalWeight = 0;
-                   for (ArrayList<Milk> farmList: myReportList) {
-                       int weight = 0;
-                       String farmName = null;
-                       for (Milk currentMilk : farmList) {
-                         farmName = currentMilk.getFarmID();
-                         weight += currentMilk.getWeight();
-                       }
-                       if (farmName != null) {
-                         Milk sumMilk = new Milk (new Date(),farmName, weight);
-                         totalWeight += weight;
-                         storedReportSet.add(sumMilk);
-                       }
-                   }                   
-                   try {
-                     FileWriter csvWriter;
-                     csvWriter = new FileWriter(file);                  
-                     csvWriter.append(report.getTitle());
-                     csvWriter.append("\n");                  
-                     csvWriter.append("FarmID");
-                     csvWriter.append(",");
-                     csvWriter.append("Total Milk Weight");
-                     csvWriter.append(",");
-                     csvWriter.append("Percent");
-                     csvWriter.append("\n");                  
-                     for (Milk currentMilk : storedReportSet) {
-                         csvWriter.append(currentMilk.getFarmID());
-                         csvWriter.append(",");
-                         csvWriter.append(Integer.toString(currentMilk.getWeight()));
-                         csvWriter.append(",");
-                         float percent = (currentMilk.getWeight() * 100.0f) / totalWeight;
-                         csvWriter.append(String.valueOf(percent));
-                         csvWriter.append("\n");
-                         }
-                      csvWriter.close();
-                     }              
-                catch (Exception ex) { }
+                   generateAnnualReportCSV(annulCheck, file, storedReportSet);
                 }
                 
                 else if (farmCheck.isSelected()) {
-                  myReportList = report.getReportList();
-                  int totalWeight = 0;
-                  String farmName = null;
-                  for (ArrayList<Milk> farmList: myReportList) {
-                      int weight = 0;
-                      farmName = null;
-                      Date produceDate = null;
-                      for (Milk currentMilk : farmList) {                        
-                        farmName = currentMilk.getFarmID();
-                        weight += currentMilk.getWeight();
-                        produceDate = currentMilk.getDate();
-                      }
-                      
-                      if (farmName != null) {
-                        Milk sumMilk = new Milk (produceDate,farmName, weight);
-                        totalWeight += weight;
-                        storedReportSet.add(sumMilk);
-                      }
-                    }
-                  try {
-                    FileWriter csvWriter;
-                    csvWriter = new FileWriter(file);                  
-                    csvWriter.append(report.getTitle());
-                    csvWriter.append("\n");   
-                    if (farmName != null) {
-                      csvWriter.append(farmName);
-                      csvWriter.append("\n"); 
-                    }
-                    
-                    csvWriter.append("Month");
-                    csvWriter.append(",");
-                    csvWriter.append("Total Milk Weight");
-                    csvWriter.append(",");
-                    csvWriter.append("Percent");
-                    csvWriter.append("\n");                  
-                    for (Milk currentMilk : storedReportSet) {
-                        csvWriter.append(String.valueOf (currentMilk.getDate().getMonth()+1));
-                        csvWriter.append(",");
-                        csvWriter.append(Integer.toString(currentMilk.getWeight()));
-                        csvWriter.append(",");
-                        float percent = (currentMilk.getWeight() * 100.0f) / totalWeight;
-                        csvWriter.append(String.valueOf(percent));
-                        csvWriter.append("\n");
-                        }
-                     csvWriter.close();
-                    }              
-               catch (Exception ex) { }
+                  generateFarmidCSV(file, storedReportSet);
                   }                  
                 
-               else if (dateCheck.isSelected()) {
-                  myReportList = report.getRangeReport();
-                  HashSet<String> farmNames = new HashSet<>();
-                  int totalWeight = 0;                  
-                  for (ArrayList<Milk> farmList: myReportList) {
-                      for (Milk currentMilk : farmList) {                        
-                        String farmName = currentMilk.getFarmID();
-                        totalWeight += currentMilk.getWeight();
-                        farmNames.add(farmName);
-                      }
-                    }
-                  
-                  for (String farmName : farmNames) {
-                    Milk generatedMilk = new Milk (new Date(), farmName, 0);
-                    for (ArrayList<Milk> farmList: myReportList) {
-                      for (Milk currentMilk : farmList) {
-                          if (currentMilk.getFarmID().equals(farmName)) {
-                              int preWeight = generatedMilk.getWeight();
-                              int currentWeight = preWeight + currentMilk.getWeight();
-                              generatedMilk.setWeight(currentWeight);
-                          }
-                        }
-                      }
-                    storedReportSet.add (generatedMilk);
-                  }
-                  try {
-                    FileWriter csvWriter;
-                    csvWriter = new FileWriter(file);                  
-                    csvWriter.append(report.getTitle());
-                    csvWriter.append("\n");                     
-                    csvWriter.append("FarmID");
-                    csvWriter.append(",");
-                    csvWriter.append("Total Milk Weight");
-                    csvWriter.append(",");
-                    csvWriter.append("Percent");
-                    csvWriter.append("\n");                  
-                    for (Milk currentMilk : storedReportSet) {
-                        csvWriter.append(String.valueOf (currentMilk.getFarmID()));
-                        csvWriter.append(",");
-                        csvWriter.append(Integer.toString(currentMilk.getWeight()));
-                        csvWriter.append(",");
-                        float percent = (currentMilk.getWeight() * 100.0f) / totalWeight;
-                        csvWriter.append(String.valueOf(percent));
-                        csvWriter.append("\n");
-                        }
-                     csvWriter.close();
-                    }              
-               catch (Exception ex) { }
-                  }              
-               
-               }
+                else if (dateCheck.isSelected()) {
+                  generateDateReportCSV(file, storedReportSet);
+                  }        
              }
           }           
-         }        
+         }
+
+        private void generateReportFromSelection(CheckBox annulCheck, CheckBox farmCheck,
+            DatePicker startPicker, DatePicker endPicker, CheckBox dateCheck, CheckBox monthCheck) {
+          if (annulCheck.isSelected()) {
+              System.out.println("annul report to be generated");
+              report = showByFullYear();
+           }
+           else if (monthCheck.isSelected()) {
+             System.out.println("month report to be generated");
+             report = showByMonth(month);
+           }
+           
+           else if (dateCheck.isSelected()) {
+             System.out.println("date range report to be generated");
+           
+             report = showByDate(startPicker.getValue(),endPicker.getValue());
+           }
+           else if (farmCheck.isSelected()) {
+             System.out.println("farm report to be generated");
+             report = showByFarmID(id);
+           }
+        }
+
+        private void noSelectMessage() {
+          Text warning = new Text ("No Analyze Method Selected");   
+           warning.setFont(Font.font("Helvetica",40));
+           warning.setFill (Paint.valueOf("Red")); 
+           TextFlow warningtextflow = new TextFlow();
+           warningtextflow.getChildren().addAll(warning);
+           warningtextflow.setTextAlignment (TextAlignment.CENTER);               
+           // put report in sceneOut
+           Group groupOutwarning = new Group();
+           groupOutwarning.getChildren().add(warningtextflow);
+           Scene sceneOutwarning = new Scene(groupOutwarning); 
+           Stage stagewarning = new Stage();             
+           stagewarning.setScene(sceneOutwarning);
+           stagewarning.setTitle("warning");
+           stagewarning.setHeight(600);
+           stagewarning.setWidth(600);
+           stagewarning.show();
+        }
+
+        private void fileNotFoundMessage() {
+          Text warning = new Text ("No datafile Selected");   
+           warning.setFont(Font.font("Helvetica",40));
+           warning.setFill (Paint.valueOf("Red")); 
+           TextFlow warningtextflow = new TextFlow();
+           warningtextflow.getChildren().addAll(warning);
+           warningtextflow.setTextAlignment (TextAlignment.CENTER);               
+           // put report in sceneOut
+           Group groupOutwarning = new Group();
+           groupOutwarning.getChildren().add(warningtextflow);
+           Scene sceneOutwarning = new Scene(groupOutwarning); 
+           Stage stagewarning = new Stage();             
+           stagewarning.setScene(sceneOutwarning);
+           stagewarning.setTitle("warning");
+           stagewarning.setHeight(600);
+           stagewarning.setWidth(600);
+           stagewarning.show();
+        }
+
+        /**
+         * @param annulCheck
+         * @param file  generate month report and annual report
+         * @param storedReportSet
+         */
+        private void generateAnnualReportCSV(CheckBox annulCheck, File file,
+          TreeSet<Milk> storedReportSet) {
+          ArrayList<ArrayList<Milk>> myReportList;
+          if (annulCheck.isSelected()) {myReportList = report.getAnnual();}
+           else {myReportList = report.getMonthReport();}                     
+           
+           int totalWeight = 0;
+           for (ArrayList<Milk> farmList: myReportList) {
+               int weight = 0;
+               String farmName = null;
+               for (Milk currentMilk : farmList) {
+                 farmName = currentMilk.getFarmID();
+                 weight += currentMilk.getWeight();
+               }
+               if (farmName != null) {
+                 Milk sumMilk = new Milk (new Date(),farmName, weight);
+                 totalWeight += weight;
+                 storedReportSet.add(sumMilk);
+               }
+           }                   
+           try {
+             FileWriter csvWriter;
+             csvWriter = new FileWriter(file);                  
+             csvWriter.append(report.getTitle());
+             csvWriter.append("\n");
+             csvWriter.append("Total milk weight: " + String.valueOf(totalWeight));
+             csvWriter.append("\n");
+             csvWriter.append("FarmID");
+             csvWriter.append(",");
+             csvWriter.append("Milk Weight");
+             csvWriter.append(",");
+             csvWriter.append("Percent (%)");
+             csvWriter.append("\n");                  
+             for (Milk currentMilk : storedReportSet) {
+                 csvWriter.append(currentMilk.getFarmID());
+                 csvWriter.append(",");
+                 csvWriter.append(Integer.toString(currentMilk.getWeight()));
+                 csvWriter.append(",");
+                 float percent = (currentMilk.getWeight() * 100.0f) / totalWeight;
+                 csvWriter.append(String.valueOf(percent));
+                 csvWriter.append("\n");
+                 }
+              csvWriter.close();
+             }              
+        catch (Exception ex) { }
+        }
+
+        /**
+         * @param file
+         * @param storedReportSet to the generate csv file
+         */
+        private void generateDateReportCSV(File file, TreeSet<Milk> storedReportSet) {
+          ArrayList<ArrayList<Milk>> myReportList;
+          myReportList = report.getRangeReport();
+          HashSet<String> farmNames = new HashSet<>();
+          int totalWeight = 0;                  
+          for (ArrayList<Milk> farmList: myReportList) {
+              for (Milk currentMilk : farmList) {                        
+                String farmName = currentMilk.getFarmID();
+                totalWeight += currentMilk.getWeight();
+                farmNames.add(farmName);
+              }
+            }
+          
+          for (String farmName : farmNames) {
+            Milk generatedMilk = new Milk (new Date(), farmName, 0);
+            for (ArrayList<Milk> farmList: myReportList) {
+              for (Milk currentMilk : farmList) {
+                  if (currentMilk.getFarmID().equals(farmName)) {
+                      int preWeight = generatedMilk.getWeight();
+                      int currentWeight = preWeight + currentMilk.getWeight();
+                      generatedMilk.setWeight(currentWeight);
+                  }
+                }
+              }
+            storedReportSet.add (generatedMilk);
+          }
+          try {
+            FileWriter csvWriter;
+            csvWriter = new FileWriter(file);                  
+            csvWriter.append(report.getTitle());
+            csvWriter.append("\n"); 
+            csvWriter.append("Total Weight: " + String.valueOf(totalWeight));
+            csvWriter.append("\n");    
+            csvWriter.append("FarmID");
+            csvWriter.append(",");
+            csvWriter.append("Milk Weight");
+            csvWriter.append(",");
+            csvWriter.append("Percent (%)");
+            csvWriter.append("\n");                  
+            for (Milk currentMilk : storedReportSet) {
+                csvWriter.append(String.valueOf (currentMilk.getFarmID()));
+                csvWriter.append(",");
+                csvWriter.append(Integer.toString(currentMilk.getWeight()));
+                csvWriter.append(",");
+                float percent = (currentMilk.getWeight() * 100.0f) / totalWeight;
+                csvWriter.append(String.valueOf(percent));
+                csvWriter.append("\n");
+                }
+             csvWriter.close();
+            }              
+        catch (Exception ex) { }
+        }
+
+        /**
+         * @param file
+         * @param storedReportSet generate farmID report csv vile
+         */
+        private void generateFarmidCSV(File file, TreeSet<Milk> storedReportSet) {
+          ArrayList<ArrayList<Milk>> myReportList;
+          myReportList = report.getReportList();
+          int totalWeight = 0;
+          String farmName = null;
+          for (ArrayList<Milk> farmList: myReportList) {
+              int weight = 0;
+              farmName = null;
+              Date produceDate = null;
+              for (Milk currentMilk : farmList) {                        
+                farmName = currentMilk.getFarmID();
+                weight += currentMilk.getWeight();
+                produceDate = currentMilk.getDate();
+              }
+              
+              if (farmName != null) {
+                Milk sumMilk = new Milk (produceDate,farmName, weight);
+                totalWeight += weight;
+                storedReportSet.add(sumMilk);
+              }
+            }
+          try {
+            FileWriter csvWriter;
+            csvWriter = new FileWriter(file);                  
+            csvWriter.append(report.getTitle());
+            csvWriter.append("\n");   
+            if (farmName != null) {
+              csvWriter.append(farmName);
+              csvWriter.append("\n"); 
+            }
+            csvWriter.append("Total Milk Weight: " + Integer.toString(totalWeight));  
+            csvWriter.append("\n");  
+            csvWriter.append("Month");
+            csvWriter.append(",");
+            csvWriter.append("Milk Weight");
+            csvWriter.append(",");
+            csvWriter.append("Percent (%)");
+            csvWriter.append("\n");                  
+            for (Milk currentMilk : storedReportSet) {
+                csvWriter.append(String.valueOf (currentMilk.getDate().getMonth()+1));
+                csvWriter.append(",");
+                csvWriter.append(Integer.toString(currentMilk.getWeight()));
+                csvWriter.append(",");
+                float percent = (currentMilk.getWeight() * 100.0f) / totalWeight;
+                csvWriter.append(String.valueOf(percent));
+                csvWriter.append("\n");
+                }
+             csvWriter.close();
+            }              
+        catch (Exception ex) { }
+        }        
        }); 
        
        b6.setOnAction (new EventHandler<ActionEvent>() {         
@@ -697,11 +954,14 @@ public class Main  extends Application implements Stat {
            b2.setText("Load Multi Files");
            b2.setStyle("-fx-background-color:greenyellow;"+
                "-fx-background-radium:20;");
+           monthCheck.setSelected(false);
+           annulCheck.setSelected(false);
+           farmCheck.setSelected(false);
+           dateCheck.setSelected(false);    
+           textFarmID.clear();
          }
        }); 
-       
-       
-       
+
         // add at least one node (borderPane most, or button or layout) to scene  
         Group group = new Group();
         group.getChildren().addAll (labelPartOne,labelPartTwo,labelPartThree,b1,b2,b4,b5,b6, textFarmID,labelTitle,labelMonth,
@@ -807,12 +1067,12 @@ public class Main  extends Application implements Stat {
                existinMonthMilkList.add (createMilk);
                monthMap.put (monthInt,existinMonthMilkList); 
              }
-
-             System.out.println(createMilk);
-             System.out.println("-----------done with one instance---------------------------");
+//
+//             System.out.println(createMilk);
+//             System.out.println("-----------done with one instance---------------------------");
            }
            catch (Exception e) {
-             System.out.println("pass this invalid date record");
+             System.out.println("One invalid date record, passed");
           }
        }
      } catch (FileNotFoundException e) {
@@ -822,26 +1082,26 @@ public class Main  extends Application implements Stat {
      } 
      
      
-     System.out.println("-----------after reading file ---------------------------");
+//     System.out.println("-----------after reading file ---------------------------");
      
      // the following printout is used to track all information in map and lists after reading files
-     if (monthMap != null) {
-       for (Integer key: monthMap.keySet()) {
-           System.out.println("month " + key + " : " + monthMap.get(key));
-       }
-     }
-     
-     if (farmMap != null) {
-       for (String key: farmMap.keySet()) {
-           System.out.println("farm infor: " + key + " : " + farmMap.get(key).getFarmID());
-       }
-     }
-     
-     if (farms != null) {
-       for (Farm farm: farms) {
-           System.out.println("farm is " + farm.getFarmID() + " " + farm.getFarmProduct());
-       }
-     }
+//     if (monthMap != null) {
+//       for (Integer key: monthMap.keySet()) {
+//           System.out.println("month " + key + " : " + monthMap.get(key));
+//       }
+//     }
+//     
+//     if (farmMap != null) {
+//       for (String key: farmMap.keySet()) {
+//           System.out.println("farm infor: " + key + " : " + farmMap.get(key).getFarmID());
+//       }
+//     }
+//     
+//     if (farms != null) {
+//       for (Farm farm: farms) {
+//           System.out.println("farm is " + farm.getFarmID() + " " + farm.getFarmProduct());
+//       }
+//     }
 }
 
  @Override
@@ -933,14 +1193,14 @@ public class Main  extends Application implements Stat {
 	                 existinMonthMilkList.add (createMilk);
 	                 monthMap.put (monthInt,existinMonthMilkList); 
 	               }
-	               
-	               
-	               System.out.println(createMilk);
-	               System.out.println("-----------done with one instance---------------------------");
+//	               
+//	               
+//	               System.out.println(createMilk);
+//	               System.out.println("-----------done with one instance---------------------------");
 	             
 	           }
 	           catch (Exception e) {
-	             System.out.println("pass this invalid date record");
+	             System.out.println("One invalid date record, passed");
               }	          
 	       }       
 	       
@@ -951,25 +1211,25 @@ public class Main  extends Application implements Stat {
 	     } 
 	}
 	 
-	 System.out.println("-------------done with reading---------");
-	 
-     if (monthMap != null) {
-       for (Integer key: monthMap.keySet()) {
-           System.out.println("month " + key + " : " + monthMap.get(key));
-       }
-     }
-     
-     if (farmMap != null) {
-       for (String key: farmMap.keySet()) {
-           System.out.println("farm infor: " + key + " : " + farmMap.get(key).getFarmID());
-       }
-     }
-     
-     if (farms != null) {
-       for (Farm farm: farms) {
-           System.out.println("farm is " + farm.getFarmID() + " " + farm.getFarmProduct());
-       }
-     }		 
+//	 System.out.println("-------------done with reading---------");
+//	 
+//     if (monthMap != null) {
+//       for (Integer key: monthMap.keySet()) {
+//           System.out.println("month " + key + " : " + monthMap.get(key));
+//       }
+//     }
+//     
+//     if (farmMap != null) {
+//       for (String key: farmMap.keySet()) {
+//           System.out.println("farm infor: " + key + " : " + farmMap.get(key).getFarmID());
+//       }
+//     }
+//     
+//     if (farms != null) {
+//       for (Farm farm: farms) {
+//           System.out.println("farm is " + farm.getFarmID() + " " + farm.getFarmProduct());
+//       }
+//     }		 
   }
 
 @Override
