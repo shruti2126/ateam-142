@@ -134,7 +134,7 @@ public class Report {
 		int[] weights = new int[12];
 		for (int i = 0; i < reportList.size(); i++) {
 			for (int j = 0; j < reportList.get(i).size(); j++) {
-				weights[i] = reportList.get(i).get(j).getWeight();
+				weights[i] += reportList.get(i).get(j).getWeight();
 			}
 		}
 		return weights;
@@ -287,6 +287,7 @@ public class Report {
 				break;
 			case 1:
 				feb.add(milk);
+				System.out.println("YES");
 				break;
 			case 2:
 				mar.add(milk);
