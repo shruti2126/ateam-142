@@ -1,71 +1,54 @@
 package application;
 
-import java.awt.TextField;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Dictionary;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
-import com.sun.javafx.collections.MappingChange.Map;
-
-import javafx.scene.Node;
 import javafx.scene.chart.PieChart;
-import javafx.scene.control.Button;
-import javafx.scene.control.MenuBar;
-import javafx.scene.layout.GridPane;
-import javafx.scene.text.Text;
 
 /**
- * @author Samuel Bahr
- * Used to generate report
+ * @author Samuel Bahr 
  */
 public class Report {
 
+	/**
+	 * @return the monthly report and can be called
+	 */
+	public ArrayList<ArrayList<Milk>> getMonthReport() {
+		return monthReport;
+	}
 
-  /**
-   * @return the monthly report and can be called
-   */
-  public ArrayList<ArrayList<Milk>> getMonthReport() {
-    return monthReport;
-  }
+	/**
+	 * @return the annual report and can be called
+	 */
+	public ArrayList<ArrayList<Milk>> getAnnual() {
+		return annual;
+	}
 
-  /**
-   * @return the annual report and can be called
-   */
-  public ArrayList<ArrayList<Milk>> getAnnual() {
-    return annual;
-  }
-  
-  /**
-   * @return the date-range report and can be called
-   */
+	/**
+	 * @return the date-range report and can be called
+	 */
 
-  public ArrayList<ArrayList<Milk>> getRangeReport() {
-    return rangeReport;
-  }
-  
-  /**
-   * @return the farm-specific report and can be called
-   */
+	public ArrayList<ArrayList<Milk>> getRangeReport() {
+		return rangeReport;
+	}
 
-  public ArrayList<ArrayList<Milk>> getReportList() {
-    return reportList;
-  }
+	/**
+	 * @return the farm-specific report and can be called
+	 */
 
+	public ArrayList<ArrayList<Milk>> getReportList() {
+		return reportList;
+	}
 
-  private PieChart pieChart;
-	private String title;
-	private int[] monthWeights;
-	
-	private ArrayList<ArrayList<Milk>> reportList = new ArrayList<ArrayList<Milk>>();
-	private ArrayList<ArrayList<Milk>> monthReport = new ArrayList<ArrayList<Milk>>();	
-	private ArrayList<ArrayList<Milk>> annual = new ArrayList<ArrayList<Milk>>();
-	private ArrayList<ArrayList<Milk>> rangeReport = new ArrayList<ArrayList<Milk>>();
+	private String title;//Type of Report
+
+	private ArrayList<ArrayList<Milk>> reportList = new ArrayList<ArrayList<Milk>>(); //FarmReportData
+	private ArrayList<ArrayList<Milk>> monthReport = new ArrayList<ArrayList<Milk>>();//MonthReportData
+	private ArrayList<ArrayList<Milk>> annual = new ArrayList<ArrayList<Milk>>();//AnnualReportData
+	private ArrayList<ArrayList<Milk>> rangeReport = new ArrayList<ArrayList<Milk>>();//RangeReportData
 
 	public Report(String title) {
 		super();
@@ -81,86 +64,131 @@ public class Report {
 		return sb.toString();
 	}
 
+	/**
+	 * The createPieChart method is used to create a graphical representation of
+	 * data for each report.
+	 * 
+	 * @return - PieChart which represents the data graphically.
+	 */
 	public PieChart createPieChart() {
-		PieChart pieChart = new PieChart();
-		if (getTitle().equals("Annul Report")) {
+		PieChart pieChart = new PieChart(); // New instance of Pie Chart
+		if (getTitle().equals("Annul Report")) { // Creates PieChart for annual report
 
-			int[] weights = getWeightsAnnual();
-			String[] farmId = getNameAnnual();
+			int[] weights = getWeightsAnnual(); // fetches weights
+			String[] farmId = getNameAnnual(); // fetches aliases
 
-			for (int i = 0; i < weights.length; i++) {
+			for (int i = 0; i < weights.length; i++) { // iterates and creates pie chart
 				pieChart.getData().add(createData(farmId[i], weights[i]));
 			}
-			return pieChart;
+			return pieChart; // returns newly created Pie Chart
 
-		} else if (getTitle().equals("FarmId Report")) {
-			int[] weights = getWeightsFarm();
+		} else if (getTitle().equals("FarmId Report")) { // Creates PieChart for FarmID report
+			int[] weights = getWeightsFarm(); // fetches the weights
 			String[] months = new String[] { "January", "Feburary", "March", "April", "May", "June", "July", "August",
 					"September", "October", "November", "December" };
 
 			for (int i = 0; i < weights.length; i++) {
-				pieChart.getData().add(createData(months[i], weights[i]));
+				pieChart.getData().add(createData(months[i], weights[i])); //// iterates and creates pie chart
 			}
 
-			return pieChart;
-		} else if (getTitle().equals("Month Report")) {
-			int[] weights = getWeightsMonth();
-			String[] names = getFarmNamesMonth();
+			return pieChart; // returns newly created Pie Chart
+		} else if (getTitle().equals("Month Report")) { // Creates PieChart for Month Report
+			int[] weights = getWeightsMonth(); // fetches weights
+			String[] names = getFarmNamesMonth();// fetches aliases
 			for (int i = 0; i < weights.length; i++) {
-				pieChart.getData().add(createData(names[i], weights[i]));
+				pieChart.getData().add(createData(names[i], weights[i])); //// iterates and creates pie chart
 			}
-			return pieChart;
+			return pieChart; // returns newly created Pie Chart
 		} else if (getTitle().equals("Dates Report")) {
 
-			int[] weights = getRangedWeights();
-			String[] farmId = getRangedNames();
+			int[] weights = getRangedWeights(); // fetches weights
+			String[] farmId = getRangedNames(); // fetches aliases
 			for (int i = 0; i < weights.length; i++) {
-				pieChart.getData().add(createData(farmId[i], weights[i]));
+				pieChart.getData().add(createData(farmId[i], weights[i])); //// iterates and creates pie chart
 
 			}
-			return pieChart;
+			return pieChart;// returns newly created Pie Chart
 		}
 		return null;
 	}
 
+	/**
+	 * The createData method is a helper method used to build the pieces of the pie
+	 * chart. An alias and a weight is passed in to associate the piece with a name
+	 * and an assignment of value
+	 * 
+	 * @param alias  - Name for the PieChart.Data segment
+	 * @param weight - Value associated with the Piechart.Data segment
+	 * @return - A new Piechart.Data segment
+	 */
 	private PieChart.Data createData(String alias, int weight) {
 		return new PieChart.Data(alias, weight);
 	}
-	
 
-
+	/**
+	 * The getWeightsFarm method iterates through the Farm Report list and sums the
+	 * milk from each index(Farm) into a new array for which will be displayed
+	 * throughout the report.
+	 * 
+	 * @return Representing the milk weights for every specific farms used during
+	 *         the Farm report.
+	 */
 	private int[] getWeightsFarm() {
 
-		int[] weights = new int[12];
-		for (int i = 0; i < reportList.size(); i++) {
+		int[] weights = new int[reportList.size()]; // New Array Created
+		for (int i = 0; i < weights.length; i++) {// Iteration
 			for (int j = 0; j < reportList.get(i).size(); j++) {
-				weights[i] += reportList.get(i).get(j).getWeight();
+				weights[i] += reportList.get(i).get(j).getWeight(); // Added towards the sum
 			}
 		}
 		return weights;
 
 	}
 
+	/**
+	 * The getWeightsMonth method iterates through the Month Report list and sums
+	 * the milk from each index(Farm) into a new array for which will be displayed
+	 * throughout the report.
+	 * 
+	 * @return- Representing the milk weights for every specific farms used during
+	 *          the Farm report.
+	 * 
+	 */
 	private int[] getWeightsMonth() {
-		int[] weights = new int[this.monthReport.size()];
-		for (int i = 0; i < weights.length; i++) {
+		int[] weights = new int[this.monthReport.size()]; // Created New Array
+		for (int i = 0; i < weights.length; i++) { // Iteration
 			for (int j = 0; j < monthReport.get(i).size(); j++) {
-				weights[i] += monthReport.get(i).get(j).getWeight();
+				weights[i] += monthReport.get(i).get(j).getWeight(); // Adds toward the sum
 			}
 		}
 		return weights;
 	}
 
+	/**
+	 * The getWeightsAnnual method iterates through the Annual list and sums the
+	 * milk from each index(Farm) into a new array for which will be displayed
+	 * throughout the report.
+	 * 
+	 * @return - Representing the milk weights for every specific farms used during
+	 *         the Annual report.
+	 */
 	private int[] getWeightsAnnual() {
-		int weights[] = new int[annual.size()];
-		for (int i = 0; i < weights.length; i++) {
+		int weights[] = new int[annual.size()]; // New array
+		for (int i = 0; i < weights.length; i++) { // Iteration
 			for (int j = 0; j < annual.get(i).size(); j++) {
-				weights[i] += annual.get(i).get(j).getWeight();
+				weights[i] += annual.get(i).get(j).getWeight(); // Adds toward the sum
 			}
 		}
 		return weights;
 	}
 
+	/**
+	 * The getNameAnnual method iterates through the Annual List and fetches the
+	 * Farm's ID through each index and adds the string to a new array which will be
+	 * utilized throughout the report.
+	 * 
+	 * @return - An array representing all farm names throughout the annual report
+	 */
 	private String[] getNameAnnual() {
 		String[] famrName = new String[annual.size()];
 		for (int i = 0; i < annual.size(); i++) {
@@ -170,6 +198,13 @@ public class Report {
 		return famrName;
 	}
 
+	/**
+	 * The getFarmNamesMonth method iterates through the Month List and fetches the
+	 * Farm's ID through each index and adds the string to a new array which will be
+	 * utilized throughout the report.
+	 * 
+	 * @return - An array representing all farm names throughout the month report
+	 */
 	private String[] getFarmNamesMonth() {
 		String[] names = new String[monthReport.size()];
 		for (int i = 0; i < names.length; i++) {
@@ -179,6 +214,14 @@ public class Report {
 
 	}
 
+	/**
+	 * The getRangedNames method iterates through the RangeReport List and fetches
+	 * the Farm's ID through each index and adds the string to a new array which
+	 * will be utilized throughout the report.
+	 * 
+	 * @return - An array representing all farm names throughout the RangeDate
+	 *         report
+	 */
 	private String[] getRangedNames() {
 		String[] names = new String[rangeReport.size()];
 		for (int i = 0; i < names.length; i++) {
@@ -187,41 +230,68 @@ public class Report {
 		return names;
 	}
 
+	/**
+	 * The getRangedWeights method iterates through the RangeReport list and sums
+	 * the milk from each index(Farm) into a new array for which will be displayed
+	 * throughout the report.
+	 * 
+	 * @return - Representing the milk weights for every specific farms throughout
+	 *         the Range Date report.
+	 */
 	private int[] getRangedWeights() {
-		int[] weights = new int[rangeReport.size()];
-		for (int i = 0; i < weights.length; i++) {
+		int[] weights = new int[rangeReport.size()]; // New array created
+		for (int i = 0; i < weights.length; i++) { // Iteration
 			for (int j = 0; j < rangeReport.get(i).size(); j++) {
-				weights[i] += rangeReport.get(i).get(j).getWeight();
+				weights[i] += rangeReport.get(i).get(j).getWeight(); // Adds weight into array
 			}
 		}
 		return weights;
 	}
 
+	/**
+	 * The month report fetches all of the milk data, and filters each milk object
+	 * into a list if it's month attribute matches the month parameter being passed
+	 * in. After, the milk is sorted into it's corresponding farm.
+	 * 
+	 * @param storage - Entire Milk Data
+	 * @param month   - The specific month being analyzed.
+	 */
 	@SuppressWarnings("deprecation")
 	public void monthReport(List<Milk> storage, int month) {
 		List<Milk> milk = new ArrayList<Milk>();
 
 		for (Milk m : storage) {
-			if (m.getDate().getMonth() == month -1) {
-				milk.add(m);
+			if (m.getDate().getMonth() == month - 1) { // Filter Process
+				milk.add(m); // Adds to list if criteria is met
 			}
 		}
 		ArrayList<ArrayList<Milk>> idMilk = new ArrayList<ArrayList<Milk>>();
-		for (Milk milk2 : milk) {
-			if (!contains(milk2, idMilk)) {
+		for (Milk milk2 : milk) { // Sorting Process
+			if (!contains(milk2, idMilk)) { // Helper Private Method
 				ArrayList<Milk> newFarm = new ArrayList<Milk>();
 				newFarm.add(milk2);
 				idMilk.add(newFarm);
 			}
 		}
-		this.monthReport = idMilk;
+		this.monthReport = idMilk; // Sets the month report
 
 	}
 
+	/**
+	 * The Contain helper method determines whether a farm object already exists
+	 * among the data structure being passed in. If the farm object does exist, the
+	 * milk object will be added towards that list
+	 * 
+	 * @param milk       - Milk object that is being compared
+	 * @param milkOrigin - DataStructure for which the milk is being compared
+	 *                   against
+	 * @return -- boolean depicting whether the milk's farm exist amongst the
+	 *         DataStructure passed in
+	 */
 	private boolean contains(Milk milk, ArrayList<ArrayList<Milk>> milkOrigin) {
 		for (int i = 0; i < milkOrigin.size(); i++) {
-			if (milk.getFarmID().contentEquals(milkOrigin.get(i).get(0).getFarmID())) {
-				milkOrigin.get(i).add(milk);
+			if (milk.getFarmID().contentEquals(milkOrigin.get(i).get(0).getFarmID())) { // Compares
+				milkOrigin.get(i).add(milk); // Adds milk to current list
 				return true;
 			}
 		}
@@ -229,10 +299,20 @@ public class Report {
 		return false;
 	}
 
+	/**
+	 * The annual report fetches all of the milk data, and sorts each object into
+	 * it's corresponding farm. If the farm doens't exist, a new farm list object
+	 * will be created where the milk will be added towards.
+	 * 
+	 * @param storage - Entire Milk Data
+	 */
 	public void annualReport(List<Milk> storage) {
-		for (Milk milk : storage) {
-			if (!contains(milk, annual)) {
-				ArrayList<Milk> newFarm = new ArrayList<Milk>();
+		for (Milk milk : storage) { // Iterates through each milk object and determines whether it's farm has been
+									// added into the annualReportList.
+
+			if (!contains(milk, annual)) { // Helper private method
+				ArrayList<Milk> newFarm = new ArrayList<Milk>(); // New list created if designated farm list is
+																	// Nonexistent
 				newFarm.add(milk);
 				annual.add(newFarm);
 			}
@@ -240,22 +320,36 @@ public class Report {
 
 	}
 
+	/**
+	 * The DateRangeReport method is essentially a filter report for which only
+	 * allows Milk that lie in between the date threshold to be analyzed. After, all
+	 * of the milk has been filtered, then the milk will be sorted based upon it's
+	 * farm.
+	 * 
+	 * @param begin   - The starting date filter ... Dates must appear on or after
+	 *                this date
+	 * @param end     - The ending date filter ... Dates must appear on or before
+	 *                this date
+	 * @param storage - Entire Milk Data
+	 */
 	public void dateRangeReport(LocalDate begin, LocalDate end, List<Milk> storage) {
-//		ZoneId defaultZoneId = ZoneId.systemDefault();
-//		Date start = Date.from(begin.atStartOfDay(defaultZoneId).toInstant());
-//		Date last= Date.from(begin.atStartOfDay(defaultZoneId).toInstant());
-		
-		ArrayList<Milk> range = new ArrayList<Milk>();
-		for (Milk milk : storage) {
+
+		ArrayList<Milk> range = new ArrayList<Milk>(); // List of Filtered Milk Objects
+		for (Milk milk : storage) { // Filter Process
 			LocalDate date = milk.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-			
-			if(date.compareTo(begin) >= 0 && date.compareTo(end) <= 0) {
-				range.add(milk);
+
+			if (date.compareTo(begin) >= 0 && date.compareTo(end) <= 0) { // Comparing the Begin/End filter dates with
+																			// each milk object
+				range.add(milk); // Added to the range list if criteria is met
 			}
 		}
-		for (Milk milk2 : range) {
-			if (!contains(milk2, rangeReport)) {
-				ArrayList<Milk> newFarm = new ArrayList<Milk>();
+		for (Milk milk2 : range) { // Sorting Process
+			if (!contains(milk2, rangeReport)) { // Calls the contain method(sorting helper method), allowing to test
+													// whether the farm exists within the range list. If not,
+													// a new list will be created where the farm will be added and the
+													// milk be placed into
+				ArrayList<Milk> newFarm = new ArrayList<Milk>(); // New list if farm doesn't currently exist in the
+																	// range list
 				newFarm.add(milk2);
 				rangeReport.add(newFarm);
 			}
@@ -263,10 +357,17 @@ public class Report {
 
 	}
 
+	/**
+	 * The farm report method intakes a Farm Object, fetches the milk supply of the
+	 * farm, and sorts the milk into months. After the sort, data from each month
+	 * will be combined into one list
+	 * 
+	 * @param Farm object which will be under analysis for the report
+	 */
 	@SuppressWarnings("deprecation")
 	public void farmReport(Farm farm) {
 
-		ArrayList<Milk> jan = new ArrayList<Milk>();
+		ArrayList<Milk> jan = new ArrayList<Milk>(); // List of months Jan -> December
 		ArrayList<Milk> feb = new ArrayList<Milk>();
 		ArrayList<Milk> mar = new ArrayList<Milk>();
 		ArrayList<Milk> apr = new ArrayList<Milk>();
@@ -278,16 +379,15 @@ public class Report {
 		ArrayList<Milk> oct = new ArrayList<Milk>();
 		ArrayList<Milk> nov = new ArrayList<Milk>();
 		ArrayList<Milk> dec = new ArrayList<Milk>();
-		
-		Set<Milk> set = farm.getFarmProduct();
-		for (Milk milk : set) {
+
+		Set<Milk> set = farm.getFarmProduct(); // Fetches the farm's milk supply
+		for (Milk milk : set) { // Sorting Process based upon the month of each milk object
 			switch (milk.getDate().getMonth()) {
 			case 0:
 				jan.add(milk);
 				break;
 			case 1:
 				feb.add(milk);
-				System.out.println("YES");
 				break;
 			case 2:
 				mar.add(milk);
@@ -323,7 +423,7 @@ public class Report {
 				break;
 			}
 		}
-		reportList.add(jan);
+		reportList.add(jan); // Adds the list of each month to the report list which is than exported
 		reportList.add(feb);
 		reportList.add(mar);
 		reportList.add(apr);
@@ -339,28 +439,21 @@ public class Report {
 	}
 
 	/**
-	 * @return the title
+	 * Grabs the title of the report
+	 * 
+	 * @return the title - Specifies the type of report
 	 */
 	public String getTitle() {
 		return title;
 	}
 
 	/**
+	 * Sets the report type
+	 * 
 	 * @param title the title to set
 	 */
 	public void setTitle(String title) {
 		this.title = title;
 	}
-
-
-
-//  public static void main(String[] args) {
-//    Report report = new Report ("123");
-//    Milk m1 = new Milk (new Date(), "1", 25);
-//    Milk m2 = new Milk (new Date(), "2", 45);
-//    report.addMilk(m1);
-//    report.addMilk(m2);
-//    System.out.println(report.toString());
-//  }
 
 }
