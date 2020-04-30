@@ -36,7 +36,7 @@ tip: running in eclipse, set up VM argument as: (change path to your javafx lib 
 
 6.  [place any comments or notes that will help the grader here]
 
-  (1) Fisst panel is used to choose single file or multiple files. The file should be in comma (,) seperated csv or text file format.
+  (1) First panel is used to choose single file or multiple files. The file should be in comma (,) seperated csv or text file format.
   (2) Second panel will let user to choose one analytical method, by annual report (show all farms), or by one month for report, or one specific farm (by farmID),
 		or specify a range to get report.
   (3) If first or second panel is not selected, when clicking show report or save report, it will pop out a warning message.
